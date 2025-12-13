@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/skidy89/libsignal-plugins.git"
+    "url": "https://github.com/Skidy89/libsignal-plugins"
   },
   "license": "MIT",
   "browser": "browser.js",
