@@ -140,40 +140,42 @@ jobs:
       id-token: write
     needs:
       - lint
-      - build
-
+      - test-macOS-windows-binding
+      - test-linux-binding
     steps:
-      - uses: actions/checkout@v6
-
+      - uses: actions/checkout@v5
       - name: Setup node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v5
         with:
-          node-version: 24
+          node-version: 22
           cache: yarn
-
       - name: Install dependencies
         run: yarn install
-
-      - name: Create npm dirs
+      - name: create npm dirs
         run: yarn napi create-npm-dirs
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v6
+      - name: Download all artifacts
+        uses: actions/download-artifact@v5
         with:
           path: artifacts
-
       - name: Move artifacts
         run: yarn artifacts
-
       - name: List packages
         run: ls -R ./npm
-
-      - name: Authenticate npm
+        shell: bash
+      - name: Publish
         run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          npm whoami
+          npm config set provenance true
+          if git log -1 --pretty=%B | grep "^[0-9]\+\.[0-9]\+\.[0-9]\+$";
+          then
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+            npm publish --access public
+          elif git log -1 --pretty=%B | grep "^[0-9]\+\.[0-9]\+\.[0-9]\+";
+          then
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+            npm publish --tag next --access public
+          else
+            echo "Not a release, skipping publish"
+          fi
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish with napi
-        run: yarn napi prepublish -t npm
