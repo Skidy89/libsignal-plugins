@@ -77,7 +77,7 @@ pub fn verify_int(
     message: &[u8],
     sig: &[u8; 64],
 ) -> Result<bool, Box<dyn std::error::Error>> {
-    let mut sig_copy = *sig; // copia stack, mutable
+    let mut sig_copy = *sig;
 
     let ret = unsafe {
         curve25519_verify(
