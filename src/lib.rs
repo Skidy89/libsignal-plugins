@@ -95,12 +95,9 @@ pub fn verify(sig: Buffer, pub_key: Buffer, message: Buffer) -> Result<bool> {
 pub fn generate_key_pair<'a>(env: Env) -> Result<Object<'a>> {
   let (pub_key, priv_key) = generate_key_pair_int();
 
-  let mut pub_with_version = Vec::with_capacity(33);
-  pub_with_version.push(5);
-  pub_with_version.extend_from_slice(&pub_key);
 
   let mut result = Object::new(&env)?;
-  result.set("pubKey", Buffer::from(pub_with_version))?;
+  result.set("pubKey", Buffer::from(Vec::from(pub_key)))?;
   result.set("privKey", Buffer::from(Vec::from(priv_key)))?;
 
   Ok(result)
