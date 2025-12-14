@@ -79,13 +79,15 @@ pub fn verify(sig: Buffer, pub_key: Buffer, message: Buffer) -> Result<bool> {
   if sig.len() != 64 {
     return Err(Error::from_reason("Invalid signature length"));
   }
+  let pub_key_scrubbed = scrub_pub_key(&pub_key)
+    .map_err(|e| Error::from_reason(format!("Failed to scrub public key: {}", e)))?;
 
   let sig_array: &[u8; 64] = sig
     .as_ref()
     .try_into()
     .map_err(|_| Error::from_reason("Invalid signature"))?;
 
-  verify_int(pub_key.as_ref(), message.as_ref(), sig_array)
+  verify_int(pub_key_scrubbed.as_ref(), message.as_ref(), sig_array)
     .map_err(|e| Error::from_reason(format!("Verification failed: {}", e)))
 }
 
