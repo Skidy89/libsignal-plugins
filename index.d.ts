@@ -4,7 +4,15 @@ export declare function calculateAgreement(pubKey: Buffer, privKey: Buffer): Buf
 
 export declare function createKeyPair(privKey: Buffer): object
 
+export declare function curve25519Sign(privkey: Buffer, msg: Buffer): Buffer
+
 export declare function generateKeyPair(): object
+
+export declare function generatePreKey(keyId: number): object
+
+export declare function generateRegistrationId(): number
+
+export declare function generateSignedPreKey(identityPrivKey: Buffer, identityPubKey: Buffer, signedPreKeyId: number): object
 
 export declare function groupEncrypt(iteration: number, chainKey: Buffer, plaintext: Buffer): Buffer
 
