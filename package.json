@@ -57,8 +57,7 @@
     "test": "ava",
     "preversion": "napi build --platform && git add .",
     "version": "napi version",
-    "prepare": "husky",
-    "install": "napi build --platform --release"
+    "prepare": "husky"
   },
   "devDependencies": {
     "@emnapi/core": "^1.5.0",
