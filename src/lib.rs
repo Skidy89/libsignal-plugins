@@ -11,16 +11,10 @@ mod group_cipher;
 mod keyhelper;
 mod sender_key_state;
 mod utils;
+mod binding;
 
-use std::sync::Once;
 
-static SODIUM_INIT: Once = Once::new();
 
-fn init_sodium() {
-  SODIUM_INIT.call_once(|| {
-    sodiumoxide::init().expect("libsodium init failed");
-  });
-}
 // not implemented yet, placeholder
 // thread '<unnamed>' panicked at src\sender_key_state.rs:22:29:
 //range end index 48 out of range for slice of length 32
@@ -99,7 +93,6 @@ pub fn verify(sig: Buffer, pub_key: Buffer, message: Buffer) -> Result<bool> {
 pub fn generate_key_pair<'a>(env: Env) -> Result<Object<'a>> {
   let (pub_key, priv_key) = generate_key_pair_int();
 
-  // Crear formato con byte de versión sin allocations innecesarias
   let mut pub_with_version = Vec::with_capacity(33);
   pub_with_version.push(5);
   pub_with_version.extend_from_slice(&pub_key);
@@ -155,7 +148,6 @@ pub fn verify_signature(
 
 #[napi]
 pub fn curve25519_sign(privkey: Buffer, msg: Buffer) -> Result<Buffer> {
-  init_sodium();
 
   if privkey.len() != 32 {
     return Err(Error::new(Status::InvalidArg, "privkey must be 32 bytes"));

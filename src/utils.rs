@@ -1,9 +1,10 @@
 use curve25519_dalek::{MontgomeryPoint, Scalar};
-use ed25519_dalek::{Signature, VerifyingKey};
 use napi::bindgen_prelude::Buffer;
 use rand::rngs::OsRng;
 use rand::RngCore;
-use sodiumoxide::crypto::sign;
+
+
+use crate::binding::{curve25519_sign, curve25519_verify};
 
 const BASEPOINT: [u8; 32] = {
   let mut base = [0u8; 32];
@@ -72,33 +73,24 @@ pub fn generate_key_pair_int() -> ([u8; 33], [u8; 32]) {
 }
 
 pub fn verify_int(
-  pub_key_bytes: &[u8],
-  message: &[u8],
-  sig: &[u8; 64],
+    pub_key_bytes: &[u8],
+    message: &[u8],
+    sig: &[u8; 64],
 ) -> Result<bool, Box<dyn std::error::Error>> {
-  let pub_key = if pub_key_bytes.len() == 33 {
-    if pub_key_bytes[0] != 5 {
-      return Ok(false);
-    }
-    pub_key_bytes[1..33]
-      .try_into()
-      .map_err(|_| Box::<dyn std::error::Error>::from("Invalid public key"))?
-  } else if pub_key_bytes.len() == 32 {
-    pub_key_bytes
-      .try_into()
-      .map_err(|_| Box::<dyn std::error::Error>::from("Invalid public key"))?
-  } else {
-    return Ok(false);
-  };
+    let mut sig_copy = *sig; // copia stack, mutable
 
-  match VerifyingKey::from_bytes(pub_key) {
-    Ok(ver) => {
-      let signature = Signature::from_bytes(sig);
-      Ok(ver.verify_strict(message, &signature).is_ok())
-    }
-    Err(_) => Ok(false),
-  }
+    let ret = unsafe {
+        curve25519_verify(
+            sig_copy.as_mut_ptr(),
+            pub_key_bytes.as_ptr(),
+            message.as_ptr(),
+            message.len(),
+        )
+    };
+
+    Ok(ret == 0)
 }
+
 
 pub fn scrub_pub_key(pub_key: &Buffer) -> Result<[u8; 32], &'static str> {
   let slice = match pub_key.len() {
@@ -114,18 +106,14 @@ pub fn scrub_pub_key(pub_key: &Buffer) -> Result<[u8; 32], &'static str> {
 }
 
 pub fn curve25519_sign_inner(privkey: &[u8; 32], msg: &[u8]) -> [u8; 64] {
-  let seed = sign::Seed::from_slice(privkey).unwrap();
-  let (pk, sk) = sign::keypair_from_seed(&seed);
-
-  let sign_bit = pk.as_ref()[31] & 0x80;
-
-  let signature = sign::sign_detached(msg, &sk);
-
-  let mut sig = [0u8; 64];
-  sig.copy_from_slice(signature.as_ref());
-
-  sig[63] &= 0x7F;
-  sig[63] |= sign_bit;
-
-  sig
+  let mut sig_out = [0u8; 64];
+  unsafe {
+    curve25519_sign(
+      sig_out.as_mut_ptr(),
+      privkey.as_ptr(),
+      msg.as_ptr(),
+      msg.len(),
+    );
+  }
+  sig_out
 }

@@ -20,11 +20,12 @@ aes = "0.8.4"
 ctr = "0.9.2"
 sha2 = "0.10.9"
 zeroize = "1.8.2"
-sodiumoxide = "0.2.7"
+
 
 
 [build-dependencies]
 napi-build = "2"
+cc = "1.0"
 
 [profile.release]
 lto = true
