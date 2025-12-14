@@ -99,7 +99,6 @@ pub fn verify(sig: Buffer, pub_key: Buffer, message: Buffer) -> Result<bool> {
 pub fn generate_key_pair<'a>(env: Env) -> Result<Object<'a>> {
   let (pub_key, priv_key) = generate_key_pair_int();
 
-  // Crear formato con byte de versión sin allocations innecesarias
   let mut pub_with_version = Vec::with_capacity(33);
   pub_with_version.push(5);
   pub_with_version.extend_from_slice(&pub_key);
