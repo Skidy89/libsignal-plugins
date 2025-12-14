@@ -20,7 +20,11 @@
   "files": [
     "index.d.ts",
     "index.js",
-    "browser.js"
+    "browser.js",
+    "cargo.toml",
+    "native",
+    "build.rs",
+    "src"
   ],
   "napi": {
     "binaryName": "libsignal-plugins",
