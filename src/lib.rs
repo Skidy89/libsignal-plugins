@@ -7,13 +7,11 @@ use crate::utils::{
 };
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
+mod binding;
 mod group_cipher;
 mod keyhelper;
 mod sender_key_state;
 mod utils;
-mod binding;
-
-
 
 // not implemented yet, placeholder
 // thread '<unnamed>' panicked at src\sender_key_state.rs:22:29:
@@ -95,7 +93,6 @@ pub fn verify(sig: Buffer, pub_key: Buffer, message: Buffer) -> Result<bool> {
 pub fn generate_key_pair<'a>(env: Env) -> Result<Object<'a>> {
   let (pub_key, priv_key) = generate_key_pair_int();
 
-
   let mut result = Object::new(&env)?;
   result.set("pubKey", Buffer::from(Vec::from(pub_key)))?;
   result.set("privKey", Buffer::from(Vec::from(priv_key)))?;
@@ -147,7 +144,6 @@ pub fn verify_signature(
 
 #[napi]
 pub fn curve25519_sign(privkey: Buffer, msg: Buffer) -> Result<Buffer> {
-
   if privkey.len() != 32 {
     return Err(Error::new(Status::InvalidArg, "privkey must be 32 bytes"));
   }

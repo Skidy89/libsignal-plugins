@@ -3,7 +3,6 @@ use napi::bindgen_prelude::Buffer;
 use rand::rngs::OsRng;
 use rand::RngCore;
 
-
 use crate::binding::{curve25519_sign, curve25519_verify};
 
 const BASEPOINT: [u8; 32] = {
@@ -73,24 +72,23 @@ pub fn generate_key_pair_int() -> ([u8; 33], [u8; 32]) {
 }
 
 pub fn verify_int(
-    pub_key_bytes: &[u8],
-    message: &[u8],
-    sig: &[u8; 64],
+  pub_key_bytes: &[u8],
+  message: &[u8],
+  sig: &[u8; 64],
 ) -> Result<bool, Box<dyn std::error::Error>> {
-    let mut sig_copy = *sig;
+  let mut sig_copy = *sig;
 
-    let ret = unsafe {
-        curve25519_verify(
-            sig_copy.as_mut_ptr(),
-            pub_key_bytes.as_ptr(),
-            message.as_ptr(),
-            message.len(),
-        )
-    };
+  let ret = unsafe {
+    curve25519_verify(
+      sig_copy.as_mut_ptr(),
+      pub_key_bytes.as_ptr(),
+      message.as_ptr(),
+      message.len(),
+    )
+  };
 
-    Ok(ret == 0)
+  Ok(ret == 0)
 }
-
 
 pub fn scrub_pub_key(pub_key: &Buffer) -> Result<[u8; 32], &'static str> {
   let slice = match pub_key.len() {
