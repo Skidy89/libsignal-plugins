@@ -1,7 +1,9 @@
 use curve25519_dalek::{MontgomeryPoint, Scalar};
 use ed25519_dalek::{Signature, VerifyingKey};
+use napi::bindgen_prelude::Buffer;
 use rand::rngs::OsRng;
 use rand::RngCore;
+use sodiumoxide::crypto::sign;
 
 const BASEPOINT: [u8; 32] = {
   let mut base = [0u8; 32];
@@ -96,4 +98,34 @@ pub fn verify_int(
     }
     Err(_) => Ok(false),
   }
+}
+
+pub fn scrub_pub_key(pub_key: &Buffer) -> Result<[u8; 32], &'static str> {
+  let slice = match pub_key.len() {
+    32 => pub_key,
+    33 if pub_key[0] == 5 => &pub_key[1..],
+    33 => return Err("Invalid version byte!!"),
+    _ => return Err("Invalid public key length, must be 32 or 33 bytes"),
+  };
+
+  let mut out = [0u8; 32];
+  out.copy_from_slice(slice);
+  Ok(out)
+}
+
+pub fn curve25519_sign_inner(privkey: &[u8; 32], msg: &[u8]) -> [u8; 64] {
+  let seed = sign::Seed::from_slice(privkey).unwrap();
+  let (pk, sk) = sign::keypair_from_seed(&seed);
+
+  let sign_bit = pk.as_ref()[31] & 0x80;
+
+  let signature = sign::sign_detached(msg, &sk);
+
+  let mut sig = [0u8; 64];
+  sig.copy_from_slice(signature.as_ref());
+
+  sig[63] &= 0x7F;
+  sig[63] |= sign_bit;
+
+  sig
 }
