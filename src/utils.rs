@@ -21,11 +21,13 @@ pub fn clamp_priv_key(priv_key: &mut [u8; 32]) {
   priv_key[31] |= 64;
 }
 
-pub fn create_key_pair_int(mut priv_key: [u8; 32]) -> ([u8; 32], [u8; 32]) {
+pub fn create_key_pair_int(mut priv_key: [u8; 32]) -> ([u8; 33], [u8; 32]) {
   clamp_priv_key(&mut priv_key);
   let scalar = Scalar::from_bytes_mod_order(priv_key);
-  let pub_key = (scalar * MontgomeryPoint(get_basepoint())).to_bytes();
-
+  let pub_key_raw = (scalar * MontgomeryPoint(get_basepoint())).to_bytes();
+  let mut pub_key = [0u8; 33];
+  pub_key[0] = 5; // version byte
+  pub_key[1..33].copy_from_slice(&pub_key_raw);
   (pub_key, priv_key)
 }
 
@@ -60,7 +62,7 @@ pub fn shared_secret_int(
   Ok(shared)
 }
 
-pub fn generate_key_pair_int() -> ([u8; 32], [u8; 32]) {
+pub fn generate_key_pair_int() -> ([u8; 33], [u8; 32]) {
   let mut rng = OsRng;
   let mut priv_key = [0u8; 32];
   rng.fill_bytes(&mut priv_key);
