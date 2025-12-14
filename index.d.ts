@@ -8,4 +8,10 @@ export declare function generateKeyPair(): object
 
 export declare function groupEncrypt(iteration: number, chainKey: Buffer, plaintext: Buffer): Buffer
 
-export declare function verifySignature(pubKey: Uint8Array, message: Uint8Array, signature: Uint8Array, isInit: boolean): boolean
+export declare function keyPair(privKey: Buffer): object
+
+export declare function sharedSecret(pubKey: Buffer, privKey: Buffer): Buffer
+
+export declare function verify(sig: Buffer, pubKey: Buffer, message: Buffer): boolean
+
+export declare function verifySignature(pubKey: Buffer, message: Buffer, sig: Buffer, isInit: boolean): boolean

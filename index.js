@@ -576,4 +576,7 @@ module.exports.calculateAgreement = nativeBinding.calculateAgreement
 module.exports.createKeyPair = nativeBinding.createKeyPair
 module.exports.generateKeyPair = nativeBinding.generateKeyPair
 module.exports.groupEncrypt = nativeBinding.groupEncrypt
+module.exports.keyPair = nativeBinding.keyPair
+module.exports.sharedSecret = nativeBinding.sharedSecret
+module.exports.verify = nativeBinding.verify
 module.exports.verifySignature = nativeBinding.verifySignature
