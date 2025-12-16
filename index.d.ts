@@ -11,6 +11,8 @@ export interface CreateKeyPair {
 
 export declare function curve25519Sign(privkey: Buffer, msg: Buffer): Buffer
 
+export declare function deriveSecrets(input: Buffer, salt: Buffer, info: Buffer, chunks: number): Array<Buffer>
+
 export declare function generateKeyPair(): CreateKeyPair
 
 export declare function generatePreKey(keyId: number): GeneratePreKey

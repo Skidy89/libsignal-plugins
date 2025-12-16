@@ -575,6 +575,7 @@ module.exports = nativeBinding
 module.exports.calculateAgreement = nativeBinding.calculateAgreement
 module.exports.createKeyPair = nativeBinding.createKeyPair
 module.exports.curve25519Sign = nativeBinding.curve25519Sign
+module.exports.deriveSecrets = nativeBinding.deriveSecrets
 module.exports.generateKeyPair = nativeBinding.generateKeyPair
 module.exports.generatePreKey = nativeBinding.generatePreKey
 module.exports.generateRegistrationId = nativeBinding.generateRegistrationId

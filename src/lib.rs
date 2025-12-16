@@ -3,8 +3,7 @@ use crate::group_cipher::encrypt;
 use crate::keyhelper::{generate_pre_key_int, generate_registration_id_int};
 use crate::sender_key_state::SenderKeyState;
 use crate::utils::{
-  create_key_pair_int, curve25519_sign_inner, generate_key_pair_int, scrub_pub_key,
-  shared_secret_int, verify_int,
+  create_key_pair_int, curve25519_sign_inner, derive_secrets_int, generate_key_pair_int, scrub_pub_key, shared_secret_int, verify_int
 };
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
@@ -13,6 +12,7 @@ mod group_cipher;
 mod keyhelper;
 mod sender_key_state;
 mod utils;
+
 // not implemented yet, placeholder
 // thread '<unnamed>' panicked at src\sender_key_state.rs:22:29:
 //range end index 48 out of range for slice of length 32
@@ -210,4 +210,20 @@ pub fn generate_pre_key(key_id: u32) -> Result<GeneratePreKey> {
   };
 
   Ok(result)
+}
+
+
+#[napi]
+pub fn derive_secrets(
+    input: Buffer,
+    salt: Buffer,
+    info: Buffer,
+    chunks: u32,
+) -> Result<Vec<Buffer>> {
+    let secrets = derive_secrets_int(input.as_ref(), salt.as_ref(), info.as_ref(), chunks as usize);
+    let buffers: Vec<Buffer> = secrets
+        .into_iter()
+        .map(|arr| Buffer::from(Vec::from(arr)))
+        .collect();
+    Ok(buffers)
 }
