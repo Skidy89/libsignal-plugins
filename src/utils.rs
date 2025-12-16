@@ -1,9 +1,10 @@
+use crate::binding::{curve25519_sign, curve25519_verify};
 use curve25519_dalek::{MontgomeryPoint, Scalar};
+use hmac::{Hmac, Mac};
 use napi::bindgen_prelude::Buffer;
 use rand::rngs::OsRng;
 use rand::RngCore;
-
-use crate::binding::{curve25519_sign, curve25519_verify};
+use sha2::Sha256;
 
 const BASEPOINT: [u8; 32] = {
   let mut base = [0u8; 32];
@@ -116,29 +117,29 @@ pub fn curve25519_sign_inner(privkey: &[u8; 32], msg: &[u8]) -> [u8; 64] {
   sig_out
 }
 
-
 pub fn derive_secrets_int(input: &[u8], salt: &[u8], info: &[u8], chunks: usize) -> Vec<[u8; 32]> {
-    use hmac::{Hmac, Mac};
-    use sha2::Sha256;
+  assert_eq!(salt.len(), 32);
+  assert!(chunks >= 1 && chunks <= 3);
 
-    assert_eq!(salt.len(), 32);
-    assert!(chunks >= 1 && chunks <= 3);
+  type HmacSha256 = Hmac<Sha256>;
+  let prk = HmacSha256::new_from_slice(salt)
+    .unwrap()
+    .chain_update(input)
+    .finalize()
+    .into_bytes();
 
-    type HmacSha256 = Hmac<Sha256>;
-    let prk = HmacSha256::new_from_slice(salt).unwrap().chain_update(input).finalize().into_bytes();
+  let mut prev = Vec::new();
+  let mut output = Vec::with_capacity(chunks);
 
-    let mut prev = Vec::new();
-    let mut output = Vec::with_capacity(chunks);
+  for i in 1..=chunks {
+    let mut hmac = HmacSha256::new_from_slice(&prk).unwrap();
+    hmac.update(&prev);
+    hmac.update(info);
+    hmac.update(&[i as u8]);
+    let result = hmac.finalize().into_bytes();
+    output.push(result.into());
+    prev = result.to_vec();
+  }
 
-    for i in 1..=chunks {
-        let mut hmac = HmacSha256::new_from_slice(&prk).unwrap();
-        hmac.update(&prev);
-        hmac.update(info);
-        hmac.update(&[i as u8]);
-        let result = hmac.finalize().into_bytes();
-        output.push(result.into());
-        prev = result.to_vec();
-    }
-
-    output
+  output
 }
