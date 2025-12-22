@@ -18,8 +18,8 @@ pub fn encrypt_int(key: &[u8], data: &[u8], iv: &[u8]) -> Result<Vec<u8>, Crypto
     Encryptor::<Aes256>::new_from_slices(key, iv).map_err(|_| CryptoError::InvalidKeyIv)?;
   let msg_len = data.len();
 
-  let mut buf = Vec::with_capacity(data.len() + 16);
-  buf.extend_from_slice(data);
+  let mut buf = vec![0u8; msg_len + 16];
+  buf[..msg_len].copy_from_slice(data);
   let ct = cipher
     .encrypt_padded_mut::<Pkcs7>(&mut buf, msg_len)
     .map_err(|_| CryptoError::Encrypt)?;
