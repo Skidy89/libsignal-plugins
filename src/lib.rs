@@ -1,4 +1,4 @@
-use crate::binding::{CreateKeyPair, GeneratePreKey, GenerateSignedPreKey, JsKeyPair};
+use crate::binding::{CreateKeyPair, GeneratePreKey, JsKeyPair};
 use crate::group_cipher::encrypt;
 use crate::keyhelper::{generate_pre_key_int, generate_registration_id_int};
 use crate::sender_key_state::SenderKeyState;
@@ -50,8 +50,8 @@ pub fn key_pair<'a>(priv_key: Buffer) -> Result<JsKeyPair> {
     .map_err(|_| Error::from_reason("Invalid private key"))?;
   let keys = create_key_pair_int(priv_key_array);
   Ok(JsKeyPair {
-    pub_key: Buffer::from(Vec::from(keys.0)),
-    priv_key: Buffer::from(Vec::from(keys.1)),
+    pub_key: Buffer::from(keys.0.as_ref()),
+    priv_key: Buffer::from(keys.1.as_ref()),
   })
 }
 
@@ -70,7 +70,7 @@ pub fn shared_secret(pub_key: Buffer, priv_key: Buffer) -> Result<Buffer> {
   let shared = shared_secret_int(pub_key.as_ref(), priv_key_array)
     .map_err(|e| Error::from_reason(format!("Shared secret calculation failed: {}", e)))?;
 
-  Ok(Buffer::from(Vec::from(shared)))
+  Ok(Buffer::from(shared.as_ref()))
 }
 
 #[napi]
@@ -95,34 +95,13 @@ pub fn generate_key_pair() -> Result<CreateKeyPair> {
   let (pub_key, priv_key) = generate_key_pair_int();
 
   let result = CreateKeyPair {
-    pub_key: Buffer::from(Vec::from(pub_key)),
-    priv_key: Buffer::from(Vec::from(priv_key)),
+    pub_key: Buffer::from(pub_key.as_ref()),
+    priv_key: Buffer::from(priv_key.as_ref()),
   };
   Ok(result)
 }
 
-#[napi]
-pub fn create_key_pair(priv_key: Buffer) -> Result<CreateKeyPair> {
-  if priv_key.len() != 32 {
-    return Err(Error::from_reason("Invalid private key length"));
-  }
 
-  let priv_key_array: [u8; 32] = priv_key
-    .as_ref()
-    .try_into()
-    .map_err(|_| Error::from_reason("Invalid private key"))?;
-
-  let (pub_key, clamped_priv) = create_key_pair_int(priv_key_array);
-  let mut pub_with_version = Vec::with_capacity(33);
-  pub_with_version.push(5);
-  pub_with_version.extend_from_slice(&pub_key);
-
-  let result = CreateKeyPair {
-    pub_key: Buffer::from(pub_with_version),
-    priv_key: Buffer::from(Vec::from(clamped_priv)),
-  };
-  Ok(result)
-}
 
 #[napi]
 pub fn calculate_agreement(pub_key: Buffer, priv_key: Buffer) -> Result<Buffer> {
@@ -154,7 +133,7 @@ pub fn curve25519_sign(privkey: Buffer, msg: Buffer) -> Result<Buffer> {
 
   let sig = curve25519_sign_inner(&pk, &msg);
 
-  Ok(Buffer::from(sig.to_vec()))
+  Ok(Buffer::from(sig.as_ref()))
 }
 
 #[napi]
@@ -163,51 +142,12 @@ pub fn generate_registration_id() -> Result<u16> {
 }
 
 #[napi]
-pub fn generate_signed_pre_key<'a>(
-  identity_priv_key: Buffer,
-  identity_pub_key: Buffer,
-  signed_pre_key_id: u32,
-) -> Result<GenerateSignedPreKey> {
-  if identity_priv_key.len() != 32 {
-    return Err(Error::from_reason("Invalid identity private key length"));
-  }
-  if identity_pub_key.len() != 33 {
-    return Err(Error::from_reason("Invalid identity public key length"));
-  }
-
-  let identity_priv_array: [u8; 32] = identity_priv_key
-    .as_ref()
-    .try_into()
-    .map_err(|_| Error::from_reason("Invalid identity private key"))?;
-  let identity_pub_array: [u8; 33] = identity_pub_key
-    .as_ref()
-    .try_into()
-    .map_err(|_| Error::from_reason("Invalid identity public key"))?;
-
-  let identity_key_pair = keyhelper::KeyPair {
-    priv_key: identity_priv_array,
-    pub_key: identity_pub_array,
-  };
-
-  let signed_pre_key =
-    keyhelper::generate_signed_pre_key_int(&identity_key_pair, signed_pre_key_id)
-      .map_err(|e| Error::from_reason(format!("Failed to generate Signed Pre Key: {}", e)))?;
-
-  let result = GenerateSignedPreKey {
-    key_id: signed_pre_key.key_id,
-    pub_key: Buffer::from(Vec::from(signed_pre_key.key_pair.pub_key)),
-    signature: Buffer::from(Vec::from(signed_pre_key.signature)),
-  };
-  Ok(result)
-}
-
-#[napi]
 pub fn generate_pre_key(key_id: u32) -> Result<GeneratePreKey> {
   let pre_key = generate_pre_key_int(key_id);
 
   let result = GeneratePreKey {
-    pub_key: Buffer::from(Vec::from(pre_key.key_pair.pub_key)),
-    priv_key: Buffer::from(Vec::from(pre_key.key_pair.priv_key)),
+    pub_key: Buffer::from(pre_key.key_pair.pub_key.as_ref()),
+    priv_key: Buffer::from(pre_key.key_pair.priv_key.as_ref()),
     key_id: pre_key.key_id,
   };
 
@@ -229,7 +169,7 @@ pub fn derive_secrets(
   );
   let buffers: Vec<Buffer> = secrets
     .into_iter()
-    .map(|arr| Buffer::from(Vec::from(arr)))
+    .map(|arr| Buffer::from(arr.as_ref()))
     .collect();
   Ok(buffers)
 }

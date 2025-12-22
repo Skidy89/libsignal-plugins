@@ -4,8 +4,6 @@ export declare function calculateAgreement(pubKey: Buffer, privKey: Buffer): Buf
 
 export declare function calculateMac(key: Buffer, data: Buffer): Buffer
 
-export declare function createKeyPair(privKey: Buffer): CreateKeyPair
-
 export interface CreateKeyPair {
   pubKey: Buffer
   privKey: Buffer
@@ -30,14 +28,6 @@ export interface GeneratePreKey {
 }
 
 export declare function generateRegistrationId(): number
-
-export declare function generateSignedPreKey(identityPrivKey: Buffer, identityPubKey: Buffer, signedPreKeyId: number): GenerateSignedPreKey
-
-export interface GenerateSignedPreKey {
-  keyId: number
-  pubKey: Buffer
-  signature: Buffer
-}
 
 export declare function groupEncrypt(iteration: number, chainKey: Buffer, plaintext: Buffer): Buffer
 

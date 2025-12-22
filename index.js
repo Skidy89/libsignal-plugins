@@ -574,7 +574,6 @@ if (!nativeBinding) {
 module.exports = nativeBinding
 module.exports.calculateAgreement = nativeBinding.calculateAgreement
 module.exports.calculateMac = nativeBinding.calculateMac
-module.exports.createKeyPair = nativeBinding.createKeyPair
 module.exports.curve25519Sign = nativeBinding.curve25519Sign
 module.exports.decryptData = nativeBinding.decryptData
 module.exports.deriveSecrets = nativeBinding.deriveSecrets
@@ -582,7 +581,6 @@ module.exports.encryptData = nativeBinding.encryptData
 module.exports.generateKeyPair = nativeBinding.generateKeyPair
 module.exports.generatePreKey = nativeBinding.generatePreKey
 module.exports.generateRegistrationId = nativeBinding.generateRegistrationId
-module.exports.generateSignedPreKey = nativeBinding.generateSignedPreKey
 module.exports.groupEncrypt = nativeBinding.groupEncrypt
 module.exports.hash = nativeBinding.hash
 module.exports.keyPair = nativeBinding.keyPair

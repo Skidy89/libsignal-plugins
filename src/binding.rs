@@ -12,12 +12,6 @@ pub struct JsKeyPair {
   pub priv_key: Buffer,
 }
 
-#[napi(object)]
-pub struct GenerateSignedPreKey {
-  pub key_id: u32,
-  pub pub_key: Buffer,
-  pub signature: Buffer,
-}
 
 #[napi(object)]
 pub struct CreateKeyPair {

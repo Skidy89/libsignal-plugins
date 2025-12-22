@@ -131,3 +131,4 @@ Cargo.lock
 .node
 package-lock.json
 bench/curve.js
+s.js
