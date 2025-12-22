@@ -1,0 +1,301 @@
+clk: ~1.97 GHz
+cpu: Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz
+runtime: node 22.13.0 (x64-win32)
+
+benchmark                      avg (min … max) p75 / p99    (min … top 1%)    
+---------------------------------------------- -------------------------------
+Generate Key Pair Node          303.19 µs/iter 262.50 µs █ 
+                         (221.40 µs … 5.14 ms)   2.51 ms █ 
+                       (  2.46 kb … 556.00 kb)   4.73 kb █▄▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+Generate Key Pair Rust Custom   474.42 µs/iter 438.50 µs █ 
+                         (386.90 µs … 5.41 ms)   2.48 ms █ 
+                       (600.00  b … 153.23 kb) 952.55  b █▇▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+                                ┌                                            ┐
+                                ┌─┬                                          ╷
+         Generate Key Pair Node │ │──────────────────────────────────────────┤
+                                └─┴                                          ╵
+                                   ┌─┬                                      ╷ 
+  Generate Key Pair Rust Custom    │ │──────────────────────────────────────┤ 
+                                   └─┴                                      ╵ 
+                                └                                            ┘
+                                221.40 µs           1.37 ms            2.51 ms
+
+summary
+  Generate Key Pair Node
+   1.56x faster than Generate Key Pair Rust Custom
+
+---------------------------------------------- -------------------------------
+Calculate Agreement Node          1.87 ms/iter   1.68 ms █  
+                           (1.47 ms … 8.66 ms)   5.85 ms █▇ 
+                       (  5.05 kb …  15.60 kb)   5.13 kb ██▃▂▁▁▁▁▁▁▁▁▂▁▁▁▁▁▁▁▁
+
+Calculate Agreement Rust Custom 977.55 µs/iter 884.10 µs █ 
+                         (765.70 µs … 6.05 ms)   4.52 ms █ 
+                       (544.00  b … 238.49 kb) 904.03  b ██▃▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+                                ┌                                            ┐
+                                      ╷┌──┬                                  ╷
+       Calculate Agreement Node       ├┤  │──────────────────────────────────┤
+                                      ╵└──┴                                  ╵
+                                ┌─┬                              ╷
+Calculate Agreement Rust Custom │ │──────────────────────────────┤
+                                └─┴                              ╵
+                                └                                            ┘
+                                765.70 µs           3.31 ms            5.85 ms
+
+summary
+  Calculate Agreement Rust Custom
+   1.92x faster than Calculate Agreement Node
+
+---------------------------------------------- -------------------------------
+Calculate Signature Node          8.10 ms/iter   9.44 ms   █▂   
+                          (5.92 ms … 13.96 ms)  13.54 ms  ▇██ ▂    ▃
+                       (290.72 kb …   2.17 mb)   1.60 mb ▅███▇██▂▂▅█▇▅▁▄▄▁▁▁▂▂
+
+Calculate Signature Rust Custom  80.94 µs/iter  67.90 µs █    
+                          (63.90 µs … 6.09 ms) 157.30 µs █    
+                       (320.00  b …  72.42 kb) 418.11  b █▃▃▂▁▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+                                ┌                                            ┐
+                                                    ╷ ┌────┬───┐             ╷
+       Calculate Signature Node                     ├─┤    │   ├─────────────┤
+                                                    ╵ └────┴───┘             ╵
+                                ┬
+Calculate Signature Rust Custom │
+                                ┴
+                                └                                            ┘
+                                63.90 µs           6.80 ms            13.54 ms
+
+summary
+  Calculate Signature Rust Custom
+   100.09x faster than Calculate Signature Node
+
+                                ┬
+Calculate Signature Rust Custom │
+                                ┴
+                                └                                            ┘
+                                63.90 µs           6.80 ms            13.54 ms
+
+summary
+  Calculate Signature Rust Custom
+   100.09x faster than Calculate Signature Node
+
+Calculate Signature Rust Custom │
+                                ┴
+                                └                                            ┘
+                                63.90 µs           6.80 ms            13.54 ms
+
+summary
+  Calculate Signature Rust Custom
+   100.09x faster than Calculate Signature Node
+
+                                63.90 µs           6.80 ms            13.54 ms
+
+summary
+  Calculate Signature Rust Custom
+   100.09x faster than Calculate Signature Node
+
+---------------------------------------------- -------------------------------
+summary
+  Calculate Signature Rust Custom
+   100.09x faster than Calculate Signature Node
+
+---------------------------------------------- -------------------------------
+Verify Signature Node             8.25 ms/iter   9.73 ms   █▃
+                          (6.09 ms … 13.35 ms)  12.67 ms  ▅██ ▅
+                       (670.48 kb …   1.64 mb)   1.61 mb ▄█████▁▄▄▃▄██▆▆▃▄▃▃▃▃
+
+---------------------------------------------- -------------------------------
+Verify Signature Node             8.25 ms/iter   9.73 ms   █▃
+                          (6.09 ms … 13.35 ms)  12.67 ms  ▅██ ▅
+                       (670.48 kb …   1.64 mb)   1.61 mb ▄█████▁▄▄▃▄██▆▆▃▄▃▃▃▃
+---------------------------------------------- -------------------------------
+Verify Signature Node             8.25 ms/iter   9.73 ms   █▃
+                          (6.09 ms … 13.35 ms)  12.67 ms  ▅██ ▅
+                       (670.48 kb …   1.64 mb)   1.61 mb ▄█████▁▄▄▃▄██▆▆▃▄▃▃▃▃
+
+Verify Signature Rust Custom    133.56 µs/iter 117.90 µs █
+                         (105.70 µs … 5.09 ms) 299.70 µs █
+Verify Signature Node             8.25 ms/iter   9.73 ms   █▃
+                          (6.09 ms … 13.35 ms)  12.67 ms  ▅██ ▅
+                       (670.48 kb …   1.64 mb)   1.61 mb ▄█████▁▄▄▃▄██▆▆▃▄▃▃▃▃
+
+Verify Signature Rust Custom    133.56 µs/iter 117.90 µs █
+                         (105.70 µs … 5.09 ms) 299.70 µs █
+                       ( 80.00  b …  96.49 kb) 266.28  b █▄▃▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+Verify Signature Rust Custom    133.56 µs/iter 117.90 µs █
+                         (105.70 µs … 5.09 ms) 299.70 µs █
+                       ( 80.00  b …  96.49 kb) 266.28  b █▄▃▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+Verify Signature Rust Custom    133.56 µs/iter 117.90 µs █
+                         (105.70 µs … 5.09 ms) 299.70 µs █
+                       ( 80.00  b …  96.49 kb) 266.28  b █▄▃▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+                                ┌                                            ┐
+                       ( 80.00  b …  96.49 kb) 266.28  b █▄▃▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+                                ┌                                            ┐
+                                                     ╷  ┌────┬────┐          ╷
+
+                                ┌                                            ┐
+                                                     ╷  ┌────┬────┐          ╷
+                                ┌                                            ┐
+                                                     ╷  ┌────┬────┐          ╷
+                                                     ╷  ┌────┬────┐          ╷
+          Verify Signature Node                      ├──┤    │    ├──────────┤
+          Verify Signature Node                      ├──┤    │    ├──────────┤
+                                                     ╵  └────┴────┘          ╵
+                                ┬╷
+   Verify Signature Rust Custom │┤
+                                ┴╵
+                                └                                            ┘
+                                105.70 µs           6.39 ms           12.67 ms
+
+summary
+                                                     ╵  └────┴────┘          ╵
+                                ┬╷
+   Verify Signature Rust Custom │┤
+                                ┴╵
+                                └                                            ┘
+                                105.70 µs           6.39 ms           12.67 ms
+
+                                                     ╵  └────┴────┘          ╵
+                                ┬╷
+   Verify Signature Rust Custom │┤
+                                ┴╵
+                                └                                            ┘
+                                105.70 µs           6.39 ms           12.67 ms
+                                                     ╵  └────┴────┘          ╵
+                                ┬╷
+   Verify Signature Rust Custom │┤
+                                ┴╵
+                                                     ╵  └────┴────┘          ╵
+                                ┬╷
+   Verify Signature Rust Custom │┤
+                                ┴╵
+                                └                                            ┘
+                                                     ╵  └────┴────┘          ╵
+                                ┬╷
+   Verify Signature Rust Custom │┤
+                                ┴╵
+                                └                                            ┘
+                                                     ╵  └────┴────┘          ╵
+                                ┬╷
+   Verify Signature Rust Custom │┤
+                                                     ╵  └────┴────┘          ╵
+                                                     ╵  └────┴────┘          ╵
+                                ┬╷
+   Verify Signature Rust Custom │┤
+                                ┴╵
+                                └                                            ┘
+                                105.70 µs           6.39 ms           12.67 ms
+
+summary
+  Verify Signature Rust Custom
+   61.77x faster than Verify Signature Node
+
+
+
+
+
+
+
+clk: ~2.05 GHz
+cpu: Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz
+runtime: bun 1.3.5 (x64-win32)
+
+benchmark                         avg (min … max) p75 / p99    (min … top 1%)
+------------------------------------------------- -------------------------------
+Generate Key Pair Rust/Wasm         59.52 µs/iter  53.40 µs █  
+                             (50.30 µs … 2.88 ms) 125.80 µs █  
+                          (  0.00  b … 228.00 kb) 930.24  b █▃▃▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+Generate Key Pair libsignal-node    34.90 µs/iter  35.95 µs █  █                 
+                            (31.22 µs … 47.41 µs)  36.71 µs █  █   ▅ ▅▅   ▅  ▅▅ ▅
+                          (  0.00  b …   1.96 kb) 756.09  b █▁▁█▁▁▁█▁██▁▁▁█▁▁██▁█
+
+                                   ┌                                            ┐
+                                            ┌───┬                               ╷
+       Generate Key Pair Rust/Wasm          │   │───────────────────────────────┤
+                                            └───┴                               ╵
+                                   ┌─┬╷
+  Generate Key Pair libsignal-node │ │┤
+                                   └─┴╵
+                                   └                                            ┘
+                                   31.22 µs          78.51 µs           125.80 µs
+
+summary
+  Generate Key Pair libsignal-node
+   1.71x faster than Generate Key Pair Rust/Wasm
+
+------------------------------------------------- -------------------------------
+Calculate Agreement Rust/Wasm      370.36 µs/iter 370.30 µs █   
+                            (322.50 µs … 2.15 ms) 623.70 µs █   
+                          (  0.00  b … 604.00 kb)   1.15 kb █▄█▅▃▃▂▂▂▁▁▁▁▁▂▂▂▁▁▁▁
+
+Calculate Agreement libsignal-node 174.74 µs/iter 161.00 µs █   
+                            (143.60 µs … 3.38 ms) 380.30 µs █   
+                          (  0.00  b …  64.00 kb)   2.25 kb █▆▅▃▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+                                   ┌                                            ┐
+                                                    ┌───┬                       ╷
+     Calculate Agreement Rust/Wasm                  │   │───────────────────────┤
+                                                    └───┴                       ╵
+                                   ┌──┬                  ╷
+Calculate Agreement libsignal-node │  │──────────────────┤
+                                   └──┴                  ╵
+                                   └                                            ┘
+                                   143.60 µs         383.65 µs          623.70 µs
+
+summary
+  Calculate Agreement libsignal-node
+   2.12x faster than Calculate Agreement Rust/Wasm
+
+------------------------------------------------- -------------------------------
+Calculate Signature Rust/Wasm      121.73 µs/iter 119.40 µs █   
+                          (102.80 µs … 431.00 µs) 240.30 µs █   
+                          (  0.00  b … 716.00 kb)   2.39 kb █▄▅▃▂▂▂▁▁▁▁▂▁▁▁▁▁▂▁▁▁
+
+Calculate Signature libsignal-node   4.34 ms/iter   4.76 ms  █   
+                              (3.63 ms … 7.85 ms)   7.21 ms ▃█   
+                          (  0.00  b …   4.12 mb) 191.68 kb ███▂▃▂▅▄▁▃▃▂▂▂▂▁▁▁▁▁▁
+
+                                   ┌                                            ┐
+                                   ┬╷
+     Calculate Signature Rust/Wasm │┤
+                                   ┴╵
+                                                         ╷┌───┬─┐               ╷
+Calculate Signature libsignal-node                       ├┤   │ ├───────────────┤
+                                                         ╵└───┴─┘               ╵
+                                   └                                            ┘
+                                   102.80 µs           3.66 ms            7.21 ms
+
+summary
+  Calculate Signature Rust/Wasm
+   35.68x faster than Calculate Signature libsignal-node
+
+------------------------------------------------- -------------------------------
+Verify Signature Rust/Wasm         197.24 µs/iter 190.30 µs █   
+                            (168.20 µs … 2.73 ms) 368.30 µs █   
+                          (  0.00  b … 416.00 kb)   1.89 kb █▆▅▄▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+
+Verify Signature libsignal-node      4.50 ms/iter   5.00 ms  █   
+                              (3.79 ms … 7.72 ms)   6.99 ms ▃█   
+                          (  0.00  b …   2.86 mb) 175.05 kb ███▇▅▃▄▄▅▅▄▄▄▂▂▂▂▂▁▁▂
+
+                                   ┌                                            ┐
+                                   ┬╷
+        Verify Signature Rust/Wasm │┤
+                                   ┴╵
+                                                           ╷┌───┬──┐            ╷
+   Verify Signature libsignal-node                         ├┤   │  ├────────────┤
+                                                           ╵└───┴──┘            ╵
+                                   └                                            ┘
+                                   168.20 µs           3.58 ms            6.99 ms
+
+summary
+  Verify Signature Rust/Wasm
+   22.84x faster than Verify Signature libsignal-node

@@ -70,12 +70,16 @@
     "ava": "^6.4.1",
     "chalk": "^5.6.2",
     "husky": "^9.1.7",
+    "libsignal-node": "github:WhiskeySockets/libsignal-node",
+    "libsignal-rust": "github:Skidy89/libsignal-node",
     "lint-staged": "^16.1.6",
+    "mitata": "^1.0.34",
     "npm-run-all2": "^8.0.4",
     "oxlint": "^1.14.0",
     "prettier": "^3.6.2",
     "tinybench": "^6.0.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "whatsapp-rust-bridge": "^0.4.8"
   },
   "lint-staged": {
     "*.@(js|ts|tsx)": [
