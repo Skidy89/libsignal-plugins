@@ -132,3 +132,4 @@ Cargo.lock
 package-lock.json
 bench/curve.js
 s.js
+proto-gen/target
