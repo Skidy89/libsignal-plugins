@@ -2,6 +2,8 @@
 /* eslint-disable */
 export declare function calculateAgreement(pubKey: Buffer, privKey: Buffer): Buffer
 
+export declare function calculateMac(key: Buffer, data: Buffer): Buffer
+
 export declare function createKeyPair(privKey: Buffer): CreateKeyPair
 
 export interface CreateKeyPair {
@@ -11,7 +13,11 @@ export interface CreateKeyPair {
 
 export declare function curve25519Sign(privkey: Buffer, msg: Buffer): Buffer
 
+export declare function decryptData(key: Buffer, data: Buffer, iv: Buffer): Buffer
+
 export declare function deriveSecrets(input: Buffer, salt: Buffer, info: Buffer, chunks: number): Array<Buffer>
+
+export declare function encryptData(key: Buffer, data: Buffer, iv: Buffer): Buffer
 
 export declare function generateKeyPair(): CreateKeyPair
 
@@ -35,6 +41,8 @@ export interface GenerateSignedPreKey {
 
 export declare function groupEncrypt(iteration: number, chainKey: Buffer, plaintext: Buffer): Buffer
 
+export declare function hash(data: Buffer): Buffer
+
 export interface JsKeyPair {
   pubKey: Buffer
   privKey: Buffer
@@ -45,5 +53,7 @@ export declare function keyPair(privKey: Buffer): JsKeyPair
 export declare function sharedSecret(pubKey: Buffer, privKey: Buffer): Buffer
 
 export declare function verify(sig: Buffer, pubKey: Buffer, message: Buffer): boolean
+
+export declare function verifyMac(key: Buffer, data: Buffer, expectedMac: Buffer, length: number): void
 
 export declare function verifySignature(pubKey: Buffer, message: Buffer, sig: Buffer, isInit: boolean): boolean

@@ -9,6 +9,7 @@ use crate::utils::{
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 mod binding;
+mod crypto;
 mod group_cipher;
 mod keyhelper;
 mod sender_key_state;
@@ -231,4 +232,55 @@ pub fn derive_secrets(
     .map(|arr| Buffer::from(Vec::from(arr)))
     .collect();
   Ok(buffers)
+}
+
+#[napi]
+pub fn encrypt_data(key: Buffer, data: Buffer, iv: Buffer) -> Result<Buffer> {
+  if key.len() != 32 {
+    return Err(Error::from_reason("Invalid key length"));
+  }
+  if iv.len() != 16 {
+    return Err(Error::from_reason("Invalid IV length"));
+  }
+
+  let encrypted = crypto::encrypt_int(key.as_ref(), data.as_ref(), iv.as_ref())
+    .map_err(|e| Error::from_reason(format!("Encryption failed: {:?}", e)))?;
+
+  Ok(Buffer::from(encrypted))
+}
+
+#[napi]
+pub fn decrypt_data(key: Buffer, data: Buffer, iv: Buffer) -> Result<Buffer> {
+  if key.len() != 32 {
+    return Err(Error::from_reason("Invalid key length"));
+  }
+  if iv.len() != 16 {
+    return Err(Error::from_reason("Invalid IV length"));
+  }
+  let decrypted = crypto::decrypt_int(key.as_ref(), data.as_ref(), iv.as_ref())
+    .map_err(|e| Error::from_reason(format!("Decryption failed: {:?}", e)))?;
+  Ok(Buffer::from(decrypted))
+}
+
+#[napi]
+pub fn verify_mac(key: Buffer, data: Buffer, expected_mac: Buffer, length: u32) -> Result<()> {
+  crypto::verify_mac_int(
+    key.as_ref(),
+    data.as_ref(),
+    expected_mac.as_ref(),
+    length as usize,
+  )
+  .map_err(|e| Error::from_reason(format!("MAC verification failed: {:?}", e)))
+}
+
+#[napi]
+pub fn calculate_mac(key: Buffer, data: Buffer) -> Result<Buffer> {
+  let mac = crypto::calculate_mac(key.as_ref(), data.as_ref())
+    .map_err(|e| Error::from_reason(format!("MAC calculation failed: {:?}", e)))?;
+  Ok(Buffer::from(mac))
+}
+#[napi]
+pub fn hash(data: Buffer) -> Result<Buffer> {
+  let hash = crypto::hash_int(data.as_ref());
+  Ok(Buffer::from(hash))
 }
