@@ -101,8 +101,6 @@ pub fn generate_key_pair() -> Result<CreateKeyPair> {
   Ok(result)
 }
 
-
-
 #[napi]
 pub fn calculate_agreement(pub_key: Buffer, priv_key: Buffer) -> Result<Buffer> {
   shared_secret(pub_key, priv_key)

@@ -12,7 +12,6 @@ pub struct JsKeyPair {
   pub priv_key: Buffer,
 }
 
-
 #[napi(object)]
 pub struct CreateKeyPair {
   pub pub_key: Buffer,
