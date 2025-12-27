@@ -30,24 +30,24 @@ pub struct KeyPair {
 pub struct CurrentRatchet {
   #[serde(rename = "ephemeralKeyPair")]
   pub ephemeral_key_pair: KeyPair,
-  #[serde(rename = "lastRemoteEphemeralKey", with = "base64")]
+  #[serde(rename = "lastRemoteEphemeralKey", with = "base64_vec")]
   pub last_remote_ephemeral_key: Vec<u8>,
   #[serde(rename = "previousCounter")]
   pub previous_counter: u32,
-  #[serde(rename = "rootKey", with = "base64")]
+  #[serde(rename = "rootKey", with = "base64_vec")]
   pub root_key: Vec<u8>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IndexInfo {
-  #[serde(rename = "baseKey", with = "base64")]
+  #[serde(rename = "baseKey", with = "base64_vec")]
   pub base_key: Vec<u8>,
   #[serde(rename = "baseKeyType")]
   pub base_key_type: BaseKeyType,
   pub closed: i64,
   pub used: u64,
   pub created: u64,
-  #[serde(rename = "remoteIdentityKey", with = "base64")]
+  #[serde(rename = "remoteIdentityKey", with = "base64_vec")]
   pub remote_identity_key: Vec<u8>,
 }
 
@@ -116,7 +116,9 @@ mod base64 {
   {
     let s = String::deserialize(deserializer)?;
     let vec = STANDARD.decode(s).map_err(serde::de::Error::custom)?;
-    vec.try_into().map_err(|_| serde::de::Error::custom(format!("expected array of length {}", N)))
+    vec
+      .try_into()
+      .map_err(|_| serde::de::Error::custom(format!("expected array of length {}", N)))
   }
 }
 

@@ -133,7 +133,7 @@ impl SessionRecord {
     sessions.sort_by(|a, b| {
       let a_used = a.index_info.used;
       let b_used = b.index_info.used;
-      b_used.cmp(&a_used) // Descending order
+      b_used.cmp(&a_used)
     });
     sessions
   }

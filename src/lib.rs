@@ -1,6 +1,9 @@
 use crate::binding::{CreateKeyPair, GeneratePreKey, JsKeyPair};
 use crate::group_cipher::encrypt;
 use crate::keyhelper::{generate_pre_key_int, generate_registration_id_int};
+use crate::libsignal::constants::{KeyPair, SessionEntry, SessionRecord};
+use crate::libsignal::session_builder::{SessionBuilder, SignedPreKey};
+use crate::libsignal::session_cipher::SessionCipher;
 use crate::sender_key_state::SenderKeyState;
 use crate::utils::{
   create_key_pair_int, curve25519_sign_inner, derive_secrets_int, generate_key_pair_int,
@@ -8,6 +11,7 @@ use crate::utils::{
 };
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
+use proto_gen::textsecure::PreKeyWhisperMessage;
 mod binding;
 mod crypto;
 mod group_cipher;
@@ -224,4 +228,322 @@ pub fn calculate_mac(key: Buffer, data: Buffer) -> Result<Buffer> {
 pub fn hash(data: Buffer) -> Result<Buffer> {
   let hash = crypto::hash_int(data.as_ref());
   Ok(Buffer::from(hash))
+}
+
+#[napi]
+pub struct SessionRecordWrapper {
+  inner: SessionRecord,
+}
+
+#[napi]
+impl SessionRecordWrapper {
+  #[napi(constructor)]
+  pub fn new() -> Self {
+    SessionRecordWrapper {
+      inner: SessionRecord::new(),
+    }
+  }
+  #[napi]
+  pub fn serialize(&self) -> String {
+    self
+      .inner
+      .serialize()
+      .map_err(|e| Error::from_reason(e.to_string()))
+      .unwrap()
+  }
+  pub fn deserialize(serialized: String) -> Result<SessionRecordWrapper> {
+    let record =
+      SessionRecord::deserialize(&serialized).map_err(|e| Error::from_reason(e.to_string()))?;
+    Ok(SessionRecordWrapper { inner: record })
+  }
+  #[napi]
+  pub fn get_version(&self) -> String {
+    self.inner.version.clone()
+  }
+  #[napi]
+  pub fn have_open_session(&self) -> bool {
+    self.inner.have_open_session()
+  }
+  #[napi]
+  pub fn remove_old_sessions(&mut self) {
+    self.inner.remove_old_sessions()
+  }
+
+  #[napi]
+  pub fn delete_all_sessions(&mut self) {
+    self.inner.delete_all_sessions()
+  }
+
+  pub fn get_inner(&self) -> &SessionRecord {
+    &self.inner
+  }
+  pub fn get_inner_mut(&mut self) -> &mut SessionRecord {
+    &mut self.inner
+  }
+}
+
+#[napi(object)]
+pub struct DeviceBundleObject {
+  pub identity_key: Buffer,
+  pub registration_id: u32,
+  pub signed_pre_key: SignedPreKeyBundle,
+  pub pre_key: Option<PreKeyBundle>,
+}
+
+#[napi(object)]
+pub struct SignedPreKeyBundle {
+  pub key_id: u32,
+  pub public_key: Buffer,
+  pub signature: Buffer,
+}
+
+#[napi(object)]
+pub struct PreKeyBundle {
+  pub key_id: u32,
+  pub public_key: Buffer,
+}
+
+#[napi(object)]
+pub struct KeyPairObject {
+  pub pub_key: Buffer,
+  pub priv_key: Buffer,
+}
+
+#[napi]
+pub struct SessionBuilderWrapper {
+  our_identity_key: KeyPairObject,
+}
+
+#[napi]
+impl SessionBuilderWrapper {
+  #[napi(constructor)]
+  pub fn new(our_identity_key: KeyPairObject) -> Self {
+    Self {
+      our_identity_key: KeyPairObject {
+        pub_key: Buffer::from(our_identity_key.pub_key.as_ref()),
+        priv_key: Buffer::from(our_identity_key.priv_key.as_ref()),
+      },
+    }
+  }
+
+  #[napi]
+  pub fn init_outgoing(&self, device: DeviceBundleObject) -> Result<String> {
+    let device_bundle = libsignal::session_builder::DeviceBundle {
+      identity_key: device.identity_key.to_vec(),
+      registration_id: device.registration_id,
+      signed_pre_key: SignedPreKey {
+        key_id: device.signed_pre_key.key_id,
+        public_key: device.signed_pre_key.public_key.to_vec(),
+        signature: device.signed_pre_key.signature.to_vec(),
+      },
+      pre_key: device.pre_key.map(|pk| libsignal::session_builder::PreKey {
+        key_id: pk.key_id,
+        public_key: pk.public_key.to_vec(),
+      }),
+    };
+
+    let pub_key: [u8; 33] = self
+      .our_identity_key
+      .pub_key
+      .as_ref()
+      .try_into()
+      .map_err(|_| Error::from_reason("Invalid public key length, expected 33 bytes"))?;
+
+    let priv_key: [u8; 32] = self
+      .our_identity_key
+      .priv_key
+      .as_ref()
+      .try_into()
+      .map_err(|_| Error::from_reason("Invalid private key length, expected 32 bytes"))?;
+
+    let key_pair = KeyPair { pub_key, priv_key };
+
+    let builder = SessionBuilder::new(key_pair);
+    let session = builder
+      .init_outgoing(&device_bundle)
+      .map_err(|e| Error::from_reason(e.to_string()))?;
+
+    serde_json::to_string(&session).map_err(|e| Error::from_reason(e.to_string()))
+  }
+
+  #[napi]
+  pub fn init_incoming(
+    &self,
+    message: PreKeyWhisperMessageObject,
+    pre_key_pair: Option<KeyPairObject>,
+    signed_pre_key_pair: KeyPairObject,
+  ) -> Result<String> {
+    let msg = PreKeyWhisperMessage {
+      identity_key: Some(message.identity_key.to_vec()),
+      registration_id: Some(message.registration_id),
+      base_key: Some(message.base_key.to_vec()),
+      pre_key_id: message.pre_key_id,
+      signed_pre_key_id: Some(message.signed_pre_key_id),
+      message: None,
+    };
+
+    let pre_key = pre_key_pair
+      .map(|kp| -> Result<KeyPair> {
+        let pub_key: [u8; 33] = kp.pub_key.as_ref().try_into().map_err(|_| {
+          Error::from_reason("Invalid pre key public key length, expected 33 bytes")
+        })?;
+
+        let priv_key: [u8; 32] = kp.priv_key.as_ref().try_into().map_err(|_| {
+          Error::from_reason("Invalid pre key private key length, expected 32 bytes")
+        })?;
+
+        Ok(KeyPair { pub_key, priv_key })
+      })
+      .transpose()?;
+
+    let signed_pub_key: [u8; 33] =
+      signed_pre_key_pair
+        .pub_key
+        .as_ref()
+        .try_into()
+        .map_err(|_| {
+          Error::from_reason("Invalid signed pre key public key length, expected 33 bytes")
+        })?;
+
+    let signed_priv_key: [u8; 32] =
+      signed_pre_key_pair
+        .priv_key
+        .as_ref()
+        .try_into()
+        .map_err(|_| {
+          Error::from_reason("Invalid signed pre key private key length, expected 32 bytes")
+        })?;
+
+    let signed_key = KeyPair {
+      pub_key: signed_pub_key,
+      priv_key: signed_priv_key,
+    };
+
+    let pub_key: [u8; 33] = self
+      .our_identity_key
+      .pub_key
+      .as_ref()
+      .try_into()
+      .map_err(|_| Error::from_reason("Invalid public key length, expected 33 bytes"))?;
+
+    let priv_key: [u8; 32] = self
+      .our_identity_key
+      .priv_key
+      .as_ref()
+      .try_into()
+      .map_err(|_| Error::from_reason("Invalid private key length, expected 32 bytes"))?;
+
+    let key_pair = KeyPair { pub_key, priv_key };
+
+    let builder = SessionBuilder::new(key_pair);
+    let session = builder
+      .init_incoming(&msg, pre_key, signed_key)
+      .map_err(|e| Error::from_reason(e.to_string()))?;
+
+    serde_json::to_string(&session).map_err(|e| Error::from_reason(e.to_string()))
+  }
+}
+
+#[napi(object)]
+pub struct EncryptResult {
+  pub message_type: u32,
+  pub body: Buffer,
+  pub registration_id: u32,
+}
+
+#[napi(object)]
+pub struct PreKeyWhisperMessageObject {
+  pub identity_key: Buffer,
+  pub registration_id: u32,
+  pub base_key: Buffer,
+  pub pre_key_id: Option<u32>,
+  pub signed_pre_key_id: u32,
+}
+
+#[napi]
+pub struct SessionCipherWrapper {
+  cipher: SessionCipher,
+}
+
+#[napi]
+impl SessionCipherWrapper {
+  #[napi(constructor)]
+  pub fn new(our_identity_key: KeyPairObject, our_registration_id: u32) -> Result<Self> {
+    let pub_key: [u8; 33] = our_identity_key
+      .pub_key
+      .as_ref()
+      .try_into()
+      .map_err(|_| Error::from_reason("Invalid public key length, expected 33 bytes"))?;
+
+    let priv_key: [u8; 32] = our_identity_key
+      .priv_key
+      .as_ref()
+      .try_into()
+      .map_err(|_| Error::from_reason("Invalid private key length, expected 32 bytes"))?;
+
+    let key_pair = KeyPair { pub_key, priv_key };
+
+    Ok(Self {
+      cipher: SessionCipher::new(key_pair, our_registration_id),
+    })
+  }
+
+  #[napi]
+  pub fn encrypt(&mut self, session_json: String, data: Buffer) -> Result<EncryptResult> {
+    let mut session: SessionEntry =
+      serde_json::from_str(&session_json).map_err(|e| Error::from_reason(e.to_string()))?;
+
+    let encrypted = self
+      .cipher
+      .encrypt(&mut session, &data)
+      .map_err(|e| Error::from_reason(e.to_string()))?;
+
+    Ok(EncryptResult {
+      message_type: encrypted.message_type as u32,
+      body: encrypted.body.into(),
+      registration_id: encrypted.registration_id,
+    })
+  }
+
+  #[napi]
+  pub fn decrypt_whisper_message(
+    &mut self,
+    session_json: String,
+    message: Buffer,
+  ) -> Result<Buffer> {
+    let mut session: SessionEntry =
+      serde_json::from_str(&session_json).map_err(|e| Error::from_reason(e.to_string()))?;
+
+    let plaintext = self
+      .cipher
+      .decrypt_whisper_message(&mut session, &message)
+      .map_err(|e| Error::from_reason(e.to_string()))?;
+
+    Ok(plaintext.into())
+  }
+}
+
+#[napi(object)]
+pub struct BaseKeyTypeEnum {
+  pub ours: u8,
+  pub theirs: u8,
+}
+
+#[napi(object)]
+pub struct ChainTypeEnum {
+  pub sending: u8,
+  pub receiving: u8,
+}
+
+#[napi]
+pub fn get_base_key_type() -> BaseKeyTypeEnum {
+  BaseKeyTypeEnum { ours: 1, theirs: 2 }
+}
+
+#[napi]
+pub fn get_chain_type() -> ChainTypeEnum {
+  ChainTypeEnum {
+    sending: 1,
+    receiving: 2,
+  }
 }
