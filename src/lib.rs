@@ -12,6 +12,7 @@ mod binding;
 mod crypto;
 mod group_cipher;
 mod keyhelper;
+mod libsignal;
 mod sender_key_state;
 mod utils;
 
@@ -126,8 +127,10 @@ pub fn curve25519_sign(privkey: Buffer, msg: Buffer) -> Result<Buffer> {
     return Err(Error::new(Status::InvalidArg, "privkey must be 32 bytes"));
   }
 
-  let mut pk = [0u8; 32];
-  pk.copy_from_slice(&privkey);
+  let pk: [u8; 32] = privkey
+    .as_ref()
+    .try_into()
+    .map_err(|_| Error::new(Status::InvalidArg, "Invalid private key"))?;
 
   let sig = curve25519_sign_inner(&pk, &msg);
 

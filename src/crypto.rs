@@ -20,10 +20,10 @@ pub fn encrypt_int(key: &[u8], data: &[u8], iv: &[u8]) -> Result<Vec<u8>, Crypto
 
   let mut buf = vec![0u8; msg_len + 16];
   buf[..msg_len].copy_from_slice(data);
-  let ct = cipher
+  cipher
     .encrypt_padded_mut::<Pkcs7>(&mut buf, msg_len)
     .map_err(|_| CryptoError::Encrypt)?;
-  Ok(ct.to_vec())
+  Ok(buf)
 }
 
 pub fn decrypt_int(key: &[u8], data: &[u8], iv: &[u8]) -> Result<Vec<u8>, CryptoError> {
@@ -31,11 +31,12 @@ pub fn decrypt_int(key: &[u8], data: &[u8], iv: &[u8]) -> Result<Vec<u8>, Crypto
     Decryptor::<Aes256>::new_from_slices(key, iv).map_err(|_| CryptoError::InvalidKeyIv)?;
 
   let mut buf = data.to_vec();
-  let decrypted_data = cipher
+  let len = cipher
     .decrypt_padded_mut::<Pkcs7>(&mut buf)
-    .map_err(|_| CryptoError::Decrypt)?;
-
-  Ok(decrypted_data.to_vec())
+    .map_err(|_| CryptoError::Decrypt)?
+    .len();
+  buf.truncate(len);
+  Ok(buf)
 }
 
 pub fn calculate_mac(key: &[u8], data: &[u8]) -> Result<Vec<u8>, CryptoError> {

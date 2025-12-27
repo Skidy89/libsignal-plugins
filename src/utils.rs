@@ -128,17 +128,19 @@ pub fn derive_secrets_int(input: &[u8], salt: &[u8], info: &[u8], chunks: usize)
     .finalize()
     .into_bytes();
 
-  let mut prev = Vec::new();
+  let mut prev: [u8; 32] = [0; 32];
+  let mut prev_len = 0;
   let mut output = Vec::with_capacity(chunks);
 
   for i in 1..=chunks {
     let mut hmac = HmacSha256::new_from_slice(&prk).unwrap();
-    hmac.update(&prev);
+    hmac.update(&prev[..prev_len]);
     hmac.update(info);
     hmac.update(&[i as u8]);
     let result = hmac.finalize().into_bytes();
-    output.push(result.into());
-    prev = result.to_vec();
+    prev.copy_from_slice(&result);
+    prev_len = 32;
+    output.push(prev);
   }
 
   output
