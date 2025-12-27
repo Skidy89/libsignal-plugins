@@ -1,3 +1,3 @@
 pub mod ciphertext;
 pub mod keyhelper;
-pub mod SenderMessageKey;
+pub mod message_key;
