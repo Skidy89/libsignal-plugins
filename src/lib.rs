@@ -15,8 +15,9 @@ use proto_gen::textsecure::PreKeyWhisperMessage;
 mod binding;
 mod crypto;
 mod group_cipher;
+pub mod groups;
 mod keyhelper;
-mod libsignal;
+pub mod libsignal;
 mod sender_key_state;
 mod utils;
 

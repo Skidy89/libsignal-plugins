@@ -37,25 +37,25 @@ pub fn create_key_pair_int(mut priv_key: [u8; 32]) -> ([u8; 33], [u8; 32]) {
 pub fn shared_secret_int(
   pub_key_bytes: &[u8],
   priv_key: [u8; 32],
-) -> Result<[u8; 32], Box<dyn std::error::Error>> {
+) -> Result<[u8; 32], Box<dyn std::error::Error + Send + Sync>> {
   if pub_key_bytes.len() != 32 && pub_key_bytes.len() != 33 {
-    return Err(Box::<dyn std::error::Error>::from(
+    return Err(Box::<dyn std::error::Error + Send + Sync>::from(
       "Invalid public key length",
     ));
   }
   let pub_key_32: [u8; 32] = if pub_key_bytes.len() == 33 {
     if pub_key_bytes[0] != 5 {
-      return Err(Box::<dyn std::error::Error>::from(
+      return Err(Box::<dyn std::error::Error + Send + Sync>::from(
         "Invalid public key version byte",
       ));
     }
     pub_key_bytes[1..33]
       .try_into()
-      .map_err(|_| Box::<dyn std::error::Error>::from("Invalid public key"))?
+      .map_err(|_| Box::<dyn std::error::Error + Send + Sync>::from("Invalid public key"))?
   } else {
     pub_key_bytes
       .try_into()
-      .map_err(|_| Box::<dyn std::error::Error>::from("Invalid public key"))?
+      .map_err(|_| Box::<dyn std::error::Error + Send + Sync>::from("Invalid public key"))?
   };
   let mut clamped_priv = priv_key;
   clamp_priv_key(&mut clamped_priv);
@@ -76,7 +76,7 @@ pub fn verify_int(
   pub_key_bytes: &[u8],
   message: &[u8],
   sig: &[u8; 64],
-) -> Result<bool, Box<dyn std::error::Error>> {
+) -> Result<bool, Box<dyn std::error::Error + Send + Sync>> {
   let mut sig_copy = *sig;
 
   let ret = unsafe {

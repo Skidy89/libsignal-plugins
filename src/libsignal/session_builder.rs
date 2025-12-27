@@ -46,7 +46,10 @@ impl SessionBuilder {
     Self { our_identity_key }
   }
 
-  pub fn init_outgoing(&self, device: &DeviceBundle) -> Result<SessionEntry, Box<dyn StdError>> {
+  pub fn init_outgoing(
+    &self,
+    device: &DeviceBundle,
+  ) -> Result<SessionEntry, Box<dyn StdError + Send + Sync>> {
     let signature: &[u8; 64] = device
       .signed_pre_key
       .signature
@@ -89,7 +92,7 @@ impl SessionBuilder {
     message: &PreKeyWhisperMessage,
     pre_key_pair: Option<KeyPair>,
     signed_pre_key_pair: KeyPair,
-  ) -> Result<SessionEntry, Box<dyn StdError>> {
+  ) -> Result<SessionEntry, Box<dyn StdError + Send + Sync>> {
     if message.pre_key_id.is_some() && pre_key_pair.is_none() {
       return Err("Invalid PreKey ID".into());
     }
@@ -123,7 +126,7 @@ impl SessionBuilder {
     their_ephemeral_pub_key: Option<&[u8]>,
     their_signed_pub_key: Option<&[u8]>,
     registration_id: u32,
-  ) -> Result<SessionEntry, Box<dyn StdError>> {
+  ) -> Result<SessionEntry, Box<dyn StdError + Send + Sync>> {
     let our_signed_key = if is_initiator {
       our_ephemeral_key.as_ref().ok_or("Missing ephemeral key")?
     } else {
@@ -212,7 +215,7 @@ impl SessionBuilder {
     &self,
     session: &mut SessionEntry,
     remote_key: &[u8],
-  ) -> Result<(), Box<dyn StdError>> {
+  ) -> Result<(), Box<dyn StdError + Send + Sync>> {
     let ratchet = &session.current_ratchet;
 
     let shared_secret = shared_secret_int(remote_key, ratchet.ephemeral_key_pair.priv_key)?;

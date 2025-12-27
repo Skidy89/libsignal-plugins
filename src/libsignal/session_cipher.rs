@@ -41,7 +41,7 @@ impl SessionCipher {
     Ok((n1 << 4) | n2)
   }
 
-  fn decode_tuple_byte(byte: u8) -> (u8, u8) {
+  pub fn decode_tuple_byte(byte: u8) -> (u8, u8) {
     (byte >> 4, byte & 0x0F)
   }
 
@@ -49,7 +49,7 @@ impl SessionCipher {
     &mut self,
     session: &mut SessionEntry,
     data: &[u8],
-  ) -> Result<EncryptedMessage, Box<dyn StdError>> {
+  ) -> Result<EncryptedMessage, Box<dyn StdError + Send + Sync>> {
     let chain_key = session.current_ratchet.ephemeral_key_pair.pub_key.clone();
     let chain = session
       .get_chain_mut(&chain_key)
@@ -128,7 +128,7 @@ impl SessionCipher {
     &self,
     session: &mut SessionEntry,
     message_buffer: &[u8],
-  ) -> Result<Vec<u8>, Box<dyn StdError>> {
+  ) -> Result<Vec<u8>, Box<dyn StdError + Send + Sync>> {
     if message_buffer.is_empty() {
       return Err("Empty message buffer".into());
     }
@@ -194,7 +194,10 @@ impl SessionCipher {
     Ok(plaintext)
   }
 
-  fn fill_message_keys(chain: &mut Chain, counter: i32) -> Result<(), Box<dyn StdError>> {
+  fn fill_message_keys(
+    chain: &mut Chain,
+    counter: i32,
+  ) -> Result<(), Box<dyn StdError + Send + Sync>> {
     let current = chain.chain_key.counter;
 
     if current >= counter {
@@ -233,7 +236,7 @@ impl SessionCipher {
     session: &mut SessionEntry,
     remote_key: &[u8; 33],
     previous_counter: i32,
-  ) -> Result<(), Box<dyn StdError>> {
+  ) -> Result<(), Box<dyn StdError + Send + Sync>> {
     if session.get_chain(remote_key).is_some() {
       return Ok(());
     }
@@ -270,7 +273,7 @@ impl SessionCipher {
     session: &mut SessionEntry,
     remote_key: &[u8; 33],
     sending: bool,
-  ) -> Result<(), Box<dyn StdError>> {
+  ) -> Result<(), Box<dyn StdError + Send + Sync>> {
     let shared_secret = shared_secret_int(
       remote_key,
       session.current_ratchet.ephemeral_key_pair.priv_key,
@@ -309,19 +312,25 @@ impl SessionCipher {
   }
 }
 
-pub fn encode_whisper_message(msg: &WhisperMessage) -> Result<Vec<u8>, Box<dyn StdError>> {
+pub fn encode_whisper_message(
+  msg: &WhisperMessage,
+) -> Result<Vec<u8>, Box<dyn StdError + Send + Sync>> {
   let mut buf = Vec::new();
   buf.reserve(msg.encoded_len());
   msg.encode(&mut buf)?;
   Ok(buf)
 }
 
-pub fn decode_whisper_message(data: &[u8]) -> Result<WhisperMessage, Box<dyn StdError>> {
+pub fn decode_whisper_message(
+  data: &[u8],
+) -> Result<WhisperMessage, Box<dyn StdError + Send + Sync>> {
   let msg = WhisperMessage::decode(data)?;
   Ok(msg)
 }
 
-pub fn encode_prekey_message(msg: &PreKeyWhisperMessage) -> Result<Vec<u8>, Box<dyn StdError>> {
+pub fn encode_prekey_message(
+  msg: &PreKeyWhisperMessage,
+) -> Result<Vec<u8>, Box<dyn StdError + Send + Sync>> {
   let mut buf = Vec::new();
   buf.reserve(msg.encoded_len());
   msg.encode(&mut buf)?;

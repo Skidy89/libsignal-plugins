@@ -572,6 +572,9 @@ if (!nativeBinding) {
 }
 
 module.exports = nativeBinding
+module.exports.SessionBuilderWrapper = nativeBinding.SessionBuilderWrapper
+module.exports.SessionCipherWrapper = nativeBinding.SessionCipherWrapper
+module.exports.SessionRecordWrapper = nativeBinding.SessionRecordWrapper
 module.exports.calculateAgreement = nativeBinding.calculateAgreement
 module.exports.calculateMac = nativeBinding.calculateMac
 module.exports.curve25519Sign = nativeBinding.curve25519Sign
@@ -581,6 +584,8 @@ module.exports.encryptData = nativeBinding.encryptData
 module.exports.generateKeyPair = nativeBinding.generateKeyPair
 module.exports.generatePreKey = nativeBinding.generatePreKey
 module.exports.generateRegistrationId = nativeBinding.generateRegistrationId
+module.exports.getBaseKeyType = nativeBinding.getBaseKeyType
+module.exports.getChainType = nativeBinding.getChainType
 module.exports.groupEncrypt = nativeBinding.groupEncrypt
 module.exports.hash = nativeBinding.hash
 module.exports.keyPair = nativeBinding.keyPair
