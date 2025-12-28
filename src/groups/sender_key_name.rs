@@ -86,15 +86,9 @@ fn is_null(s: &str) -> bool {
 }
 
 fn int_value(num: i32) -> i32 {
-  const MAX_VALUE: i32 = 0x7fffffff;
-  const MIN_VALUE: i32 = -0x80000000;
-
-  if num > MAX_VALUE || num < MIN_VALUE {
-    (num as u32 & 0xffffffff) as i32
-  } else {
     num
-  }
 }
+
 
 fn hash_code(str_key: &str) -> i32 {
   let mut hash: i32 = 0;
