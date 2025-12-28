@@ -1,6 +1,6 @@
 {
   "name": "libsignal-plugins",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Template project for writing node package with napi-rs",
   "main": "index.js",
   "repository": {
@@ -18,14 +18,13 @@
     "node-addon-api"
   ],
   "files": [
-  "index.d.ts",
-  "index.js",
-  "browser.js",
-  "cargo.toml",
-  "build.rs",
-  "src"
+    "index.d.ts",
+    "index.js",
+    "browser.js",
+    "cargo.toml",
+    "build.rs",
+    "src"
   ],
-
   "napi": {
     "binaryName": "libsignal-plugins",
     "targets": [
