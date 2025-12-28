@@ -40,11 +40,17 @@ export interface CreateKeyPair {
   privKey: Buffer
 }
 
+export declare function createSenderKey(keyId: number, iteration: number, chainKey: Buffer, signingKeyPublic: Buffer, signingKeyPrivate?: Buffer | undefined | null): Buffer
+
+export declare function createSenderKeyDistributionMessage(keyId: number, iteration: number, chainKey: Buffer, signingKey: Buffer): Buffer
+
 export declare function curve25519Sign(privkey: Buffer, msg: Buffer): Buffer
 
 export declare function decryptData(key: Buffer, data: Buffer, iv: Buffer): Buffer
 
 export declare function deriveSecrets(input: Buffer, salt: Buffer, info: Buffer, chunks: number): Array<Buffer>
+
+export declare function deserializeSenderKeyRecordJson(base64Str: string): Buffer
 
 export interface DeviceBundleObject {
   identityKey: Buffer
@@ -77,7 +83,9 @@ export declare function getBaseKeyType(): BaseKeyTypeEnum
 
 export declare function getChainType(): ChainTypeEnum
 
-export declare function groupEncrypt(iteration: number, chainKey: Buffer, plaintext: Buffer): Buffer
+export declare function groupDecryptMessage(senderKeyRecordBytes: Buffer, ciphertext: Buffer): Buffer
+
+export declare function groupEncryptMessage(senderKeyRecordBytes: Buffer, plaintext: Buffer): Buffer
 
 export declare function hash(data: Buffer): Buffer
 
@@ -93,6 +101,8 @@ export interface KeyPairObject {
   privKey: Buffer
 }
 
+export declare function parseSenderKeyDistributionMessage(serialized: Buffer): SenderKeyDistributionMessageResult
+
 export interface PreKeyBundle {
   keyId: number
   publicKey: Buffer
@@ -105,6 +115,17 @@ export interface PreKeyWhisperMessageObject {
   preKeyId?: number
   signedPreKeyId: number
 }
+
+export declare function processSenderKeyDistribution(existingRecordBytes: Buffer, distributionMessage: Buffer): Buffer
+
+export interface SenderKeyDistributionMessageResult {
+  id: number
+  iteration: number
+  chainKey: Buffer
+  signingKey: Buffer
+}
+
+export declare function serializeSenderKeyRecordJson(recordBytes: Buffer): string
 
 export declare function sharedSecret(pubKey: Buffer, privKey: Buffer): Buffer
 

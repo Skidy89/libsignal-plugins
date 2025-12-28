@@ -1,10 +1,8 @@
 use crate::binding::{CreateKeyPair, GeneratePreKey, JsKeyPair};
-use crate::group_cipher::encrypt;
 use crate::keyhelper::{generate_pre_key_int, generate_registration_id_int};
 use crate::libsignal::constants::{KeyPair, SessionEntry, SessionRecord};
 use crate::libsignal::session_builder::{SessionBuilder, SignedPreKey};
 use crate::libsignal::session_cipher::SessionCipher;
-use crate::sender_key_state::SenderKeyState;
 use crate::utils::{
   create_key_pair_int, curve25519_sign_inner, derive_secrets_int, generate_key_pair_int,
   scrub_pub_key, shared_secret_int, verify_int,
@@ -14,32 +12,10 @@ use napi_derive::napi;
 use proto_gen::textsecure::PreKeyWhisperMessage;
 mod binding;
 mod crypto;
-mod group_cipher;
 pub mod groups;
 mod keyhelper;
 pub mod libsignal;
-mod sender_key_state;
 mod utils;
-
-// not implemented yet, placeholder
-// thread '<unnamed>' panicked at src\sender_key_state.rs:22:29:
-//range end index 48 out of range for slice of length 32
-//note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-#[napi]
-pub fn group_encrypt(iteration: u32, chain_key: Buffer, plaintext: Buffer) -> Result<Buffer> {
-  if chain_key.len() != 32 {
-    return Err(Error::from_reason("Invalid chain key length"));
-  }
-
-  let mut state = SenderKeyState {
-    iteration,
-    chain_key: chain_key.as_ref().try_into().unwrap(),
-  };
-
-  let ciphertext = encrypt(&mut state, plaintext.as_ref());
-
-  Ok(Buffer::from(ciphertext))
-}
 
 // generates a key pair given a private key
 // private key is a Buffer of length 32
@@ -547,4 +523,185 @@ pub fn get_chain_type() -> ChainTypeEnum {
     sending: 1,
     receiving: 2,
   }
+}
+
+#[napi(object)]
+pub struct SenderKeyDistributionMessageResult {
+  pub id: u32,
+  pub iteration: u32,
+  pub chain_key: Buffer,
+  pub signing_key: Buffer,
+}
+
+#[napi]
+pub fn create_sender_key_distribution_message(
+  key_id: u32,
+  iteration: u32,
+  chain_key: Buffer,
+  signing_key: Buffer,
+) -> Result<Buffer> {
+  use crate::groups::sender_key_distribution_message::SenderKeyDistributionMessage;
+
+  let msg = SenderKeyDistributionMessage::new(
+    Some(key_id),
+    Some(iteration),
+    Some(chain_key.to_vec()),
+    Some(signing_key.to_vec()),
+    None,
+  )
+  .map_err(|e| Error::from_reason(e))?;
+
+  Ok(Buffer::from(msg.serialize()))
+}
+
+#[napi]
+pub fn parse_sender_key_distribution_message(
+  serialized: Buffer,
+) -> Result<SenderKeyDistributionMessageResult> {
+  use crate::groups::sender_key_distribution_message::SenderKeyDistributionMessage;
+
+  let msg = SenderKeyDistributionMessage::new(None, None, None, None, Some(serialized.to_vec()))
+    .map_err(|e| Error::from_reason(e))?;
+
+  Ok(SenderKeyDistributionMessageResult {
+    id: msg.get_id(),
+    iteration: msg.get_iteration(),
+    chain_key: Buffer::from(msg.get_chain_key()),
+    signing_key: Buffer::from(msg.get_signature_key()),
+  })
+}
+
+#[napi]
+pub fn group_encrypt_message(sender_key_record_bytes: Buffer, plaintext: Buffer) -> Result<Buffer> {
+  use crate::groups::{group_cipher::GroupCipher, sender_key_record::SenderKeyRecord};
+
+  let record_vec = sender_key_record_bytes.to_vec();
+  let record = if record_vec.is_empty() {
+    SenderKeyRecord::new(None).map_err(|e| Error::from_reason(e))?
+  } else {
+    SenderKeyRecord::from_protobuf(&record_vec).map_err(|e| Error::from_reason(e))?
+  };
+
+  let mut sender_state = record
+    .get_sender_key_state(None)
+    .ok_or_else(|| Error::from_reason("No sender key state found"))?
+    .clone();
+
+  let ciphertext = GroupCipher::encrypt_message(&mut sender_state, &plaintext)
+    .map_err(|e| Error::from_reason(e))?;
+
+  Ok(Buffer::from(ciphertext))
+}
+
+#[napi]
+pub fn group_decrypt_message(
+  sender_key_record_bytes: Buffer,
+  ciphertext: Buffer,
+) -> Result<Buffer> {
+  use crate::groups::{group_cipher::GroupCipher, sender_key_record::SenderKeyRecord};
+
+  let record =
+    SenderKeyRecord::from_protobuf(&sender_key_record_bytes).map_err(|e| Error::from_reason(e))?;
+
+  let mut sender_state = record
+    .get_sender_key_state(None)
+    .ok_or_else(|| Error::from_reason("No sender key state found"))?
+    .clone();
+
+  let plaintext = GroupCipher::decrypt_message(&mut sender_state, &ciphertext)
+    .map_err(|e| Error::from_reason(e))?;
+
+  Ok(Buffer::from(plaintext))
+}
+
+#[napi]
+pub fn process_sender_key_distribution(
+  existing_record_bytes: Buffer,
+  distribution_message: Buffer,
+) -> Result<Buffer> {
+  use crate::groups::{
+    sender_key_distribution_message::SenderKeyDistributionMessage,
+    sender_key_record::SenderKeyRecord,
+  };
+
+  let dist_msg =
+    SenderKeyDistributionMessage::new(None, None, None, None, Some(distribution_message.to_vec()))
+      .map_err(|e| Error::from_reason(e))?;
+
+  let mut record = if existing_record_bytes.is_empty() {
+    SenderKeyRecord::new(None).map_err(|e| Error::from_reason(e))?
+  } else {
+    SenderKeyRecord::from_protobuf(&existing_record_bytes).map_err(|e| Error::from_reason(e))?
+  };
+
+  record
+    .add_sender_key_state(
+      dist_msg.get_id(),
+      dist_msg.get_iteration(),
+      dist_msg.get_chain_key().to_vec(),
+      dist_msg.get_signature_key().to_vec(),
+    )
+    .map_err(|e| Error::from_reason(e))?;
+
+  let bytes = record.to_protobuf().map_err(|e| Error::from_reason(e))?;
+  Ok(Buffer::from(bytes))
+}
+
+#[napi]
+pub fn create_sender_key(
+  key_id: u32,
+  iteration: u32,
+  chain_key: Buffer,
+  signing_key_public: Buffer,
+  signing_key_private: Option<Buffer>,
+) -> Result<Buffer> {
+  use crate::groups::{
+    sender_key_record::SenderKeyRecord,
+    sender_key_state::{SenderKeyState, SenderSigningKey},
+  };
+
+  let signing_key = SenderSigningKey {
+    public: signing_key_public.to_vec(),
+    private: signing_key_private.map(|b| b.to_vec()),
+  };
+
+  let state = SenderKeyState::new(
+    key_id,
+    iteration,
+    chain_key.to_vec(),
+    Some(signing_key),
+    None,
+    None,
+    None,
+  )
+  .map_err(|e| Error::from_reason(e))?;
+
+  let structure = state.get_structure();
+  let record = SenderKeyRecord::new(Some(vec![structure])).map_err(|e| Error::from_reason(e))?;
+
+  let bytes = record.to_protobuf().map_err(|e| Error::from_reason(e))?;
+  Ok(Buffer::from(bytes))
+}
+
+#[napi]
+pub fn serialize_sender_key_record_json(record_bytes: Buffer) -> Result<String> {
+  use crate::groups::sender_key_record::SenderKeyRecord;
+
+  let record = SenderKeyRecord::from_protobuf(&record_bytes).map_err(|e| Error::from_reason(e))?;
+
+  let proto_bytes = record.to_protobuf().map_err(|e| Error::from_reason(e))?;
+  let base64 = base64::Engine::encode(&base64::engine::general_purpose::STANDARD, &proto_bytes);
+
+  Ok(base64)
+}
+
+#[napi]
+pub fn deserialize_sender_key_record_json(base64_str: String) -> Result<Buffer> {
+  use base64::Engine;
+
+  let bytes = base64::engine::general_purpose::STANDARD
+    .decode(&base64_str)
+    .map_err(|e| Error::from_reason(e.to_string()))?;
+
+  Ok(Buffer::from(bytes))
 }

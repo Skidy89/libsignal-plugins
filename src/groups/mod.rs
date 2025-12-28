@@ -1,3 +1,11 @@
 pub mod ciphertext;
+pub mod group_cipher;
 pub mod keyhelper;
 pub mod message_key;
+pub mod proto;
+pub mod sender_chain_key;
+pub mod sender_key_distribution_message;
+pub mod sender_key_message;
+pub mod sender_key_name;
+pub mod sender_key_record;
+pub mod sender_key_state;

@@ -2,6 +2,7 @@ use std::vec;
 
 use crate::{groups::ciphertext::WHISPER_GROUP, utils::derive_secrets_int};
 
+#[derive(Debug)]
 pub struct SenderMessageKey {
   iteration: u32,
   iv: [u8; 16],
