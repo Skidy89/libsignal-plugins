@@ -9,16 +9,22 @@ export declare class SessionBuilderWrapper {
 export declare class SessionCipherWrapper {
   constructor(ourIdentityKey: KeyPairObject, ourRegistrationId: number)
   encrypt(sessionJson: string, data: Buffer): EncryptResult
-  decryptWhisperMessage(sessionJson: string, message: Buffer): Buffer
+  decryptWhisperMessage(sessionJson: string, message: Buffer): DecryptResult
 }
 
 export declare class SessionRecordWrapper {
   constructor()
   serialize(): string
+  static deserialize(serialized: string): SessionRecordWrapper
   getVersion(): string
   haveOpenSession(): boolean
   removeOldSessions(): void
   deleteAllSessions(): void
+  getOpenSession(): string | null
+  setSession(sessionJson: string): void
+  getSession(baseKey: Buffer): string | null
+  closeSession(baseKey: Buffer): void
+  openSession(baseKey: Buffer): void
 }
 
 export interface BaseKeyTypeEnum {
@@ -48,6 +54,11 @@ export declare function curve25519Sign(privkey: Buffer, msg: Buffer): Buffer
 
 export declare function decryptData(key: Buffer, data: Buffer, iv: Buffer): Buffer
 
+export interface DecryptResult {
+  plaintext: Buffer
+  updatedSession: string
+}
+
 export declare function deriveSecrets(input: Buffer, salt: Buffer, info: Buffer, chunks: number): Array<Buffer>
 
 export declare function deserializeSenderKeyRecordJson(base64Str: string): Buffer
@@ -65,6 +76,7 @@ export interface EncryptResult {
   messageType: number
   body: Buffer
   registrationId: number
+  updatedSession: string
 }
 
 export declare function generateKeyPair(): CreateKeyPair
