@@ -12,6 +12,7 @@ mod binding;
 mod crypto;
 mod group_cipher;
 mod keyhelper;
+mod libsignal;
 mod sender_key_state;
 mod utils;
 

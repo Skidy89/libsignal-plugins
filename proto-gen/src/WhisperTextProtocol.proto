@@ -1,0 +1,29 @@
+syntax = "proto2";
+package textsecure;
+
+option java_package = "org.whispersystems.libsignal.protocol";
+option java_outer_classname = "WhisperProtos";
+
+message WhisperMessage {
+  optional bytes  ephemeral_key    = 1;
+  optional uint32 counter         = 2;
+  optional uint32 previous_counter = 3;
+  optional bytes  ciphertext      = 4; // PushMessageContent
+}
+
+message PreKeyWhisperMessage {
+  optional uint32 registration_id = 5;
+  optional uint32 pre_key_id       = 1;
+  optional uint32 signed_pre_key_id = 6;
+  optional bytes  base_key        = 2;
+  optional bytes  identity_key    = 3;
+  optional bytes  message        = 4; // WhisperMessage
+}
+
+message KeyExchangeMessage {
+  optional uint32 id               = 1;
+  optional bytes  base_key          = 2;
+  optional bytes  ephemeral_key     = 3;
+  optional bytes  identity_key      = 4;
+  optional bytes  base_key_signature = 5;
+}
