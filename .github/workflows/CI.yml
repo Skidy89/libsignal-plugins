@@ -92,6 +92,10 @@ jobs:
         with:
           node-version: 24
           cache: yarn
+      - name: Install protoc
+        if: ${{ runner.os == 'Linux' }}
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
