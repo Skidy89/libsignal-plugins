@@ -36,6 +36,13 @@ jobs:
         with:
           node-version: 24
           cache: yarn
+      - name: Install protoc
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+
+      - name: Install protoc (Windows)
+        if: ${{ runner.os == 'Windows' }}
+        run: choco install protoc
+      
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -90,6 +97,13 @@ jobs:
         with:
           node-version: 24
           cache: yarn
+      - name: Install protoc
+        if: ${{ runner.os == 'Linux' }}
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Install protoc (Windows)
+        if: ${{ runner.os == 'Windows' }}
+        run: choco install protoc
+
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
