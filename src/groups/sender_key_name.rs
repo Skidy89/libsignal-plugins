@@ -15,7 +15,7 @@ impl Sender {
 
 impl fmt::Display for Sender {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-   write!(f, "{}::{}", self.id, self.device_id)
+    write!(f, "{}::{}", self.id, self.device_id)
   }
 }
 
