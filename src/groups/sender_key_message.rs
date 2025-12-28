@@ -40,7 +40,7 @@ impl SenderKeyMessage {
         decode_sender_keys_msg(message).map_err(|e| format!("Failed to decode message: {}", e))?;
 
       Ok(SenderKeyMessage {
-        message_version: (version & 0xff) >> 4,
+        message_version: version,
         key_id: sender_key_message.id.ok_or("Missing id")?,
         iteration: sender_key_message.iteration.ok_or("Missing iteration")?,
         ciphertext: sender_key_message.ciphertext.ok_or("Missing ciphertext")?,

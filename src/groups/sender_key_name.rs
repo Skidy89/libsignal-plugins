@@ -1,4 +1,4 @@
-use std::fmt;
+use std::fmt::{self};
 use std::hash::{Hash, Hasher};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -11,15 +11,11 @@ impl Sender {
   pub fn new(id: String, device_id: u32) -> Self {
     Sender { id, device_id }
   }
-
-  pub fn to_string(&self) -> String {
-    format!("{}::{}", self.id, self.device_id)
-  }
 }
 
 impl fmt::Display for Sender {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "{}", self.to_string())
+   write!(f, "{}::{}", self.id, self.device_id)
   }
 }
 
@@ -47,10 +43,6 @@ impl SenderKeyName {
       "{}::{}::{}",
       self.group_id, self.sender.id, self.sender.device_id
     )
-  }
-
-  pub fn to_string(&self) -> String {
-    self.serialize()
   }
 
   pub fn equals(&self, other: Option<&SenderKeyName>) -> bool {
@@ -85,18 +77,12 @@ fn is_null(s: &str) -> bool {
   s.is_empty()
 }
 
-fn int_value(num: i32) -> i32 {
-    num
-}
-
-
 fn hash_code(str_key: &str) -> i32 {
   let mut hash: i32 = 0;
 
   if !is_null(str_key) {
     for ch in str_key.chars() {
       hash = hash.wrapping_mul(31).wrapping_add(ch as i32);
-      hash = int_value(hash);
     }
   }
 

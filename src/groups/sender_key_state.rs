@@ -108,7 +108,7 @@ impl SenderKeyState {
   pub fn get_signing_key_public(&self) -> Vec<u8> {
     let public_key = &self.sender_signing_key.public;
 
-    public_key.iter().cloned().collect::<Vec<u8>>()
+    public_key.to_vec()
   }
 
   pub fn get_signing_key_private(&self) -> Option<Vec<u8>> {
