@@ -228,6 +228,7 @@ impl SessionRecordWrapper {
       .map_err(|e| Error::from_reason(e.to_string()))
       .unwrap()
   }
+  #[napi]
   pub fn deserialize(serialized: String) -> Result<SessionRecordWrapper> {
     let record =
       SessionRecord::deserialize(&serialized).map_err(|e| Error::from_reason(e.to_string()))?;
@@ -249,6 +250,52 @@ impl SessionRecordWrapper {
   #[napi]
   pub fn delete_all_sessions(&mut self) {
     self.inner.delete_all_sessions()
+  }
+
+  #[napi]
+  pub fn get_open_session(&self) -> Result<Option<String>> {
+    match self.inner.get_open_session() {
+      Some(session) => {
+        let json = serde_json::to_string(session).map_err(|e| Error::from_reason(e.to_string()))?;
+        Ok(Some(json))
+      }
+      None => Ok(None),
+    }
+  }
+
+  #[napi]
+  pub fn set_session(&mut self, session_json: String) -> Result<()> {
+    let session: SessionEntry =
+      serde_json::from_str(&session_json).map_err(|e| Error::from_reason(e.to_string()))?;
+    self.inner.set_session(session);
+    Ok(())
+  }
+
+  #[napi]
+  pub fn get_session(&self, base_key: Buffer) -> Result<Option<String>> {
+    match self
+      .inner
+      .get_session(base_key.as_ref())
+      .map_err(|e| Error::from_reason(e))?
+    {
+      Some(session) => {
+        let json = serde_json::to_string(session).map_err(|e| Error::from_reason(e.to_string()))?;
+        Ok(Some(json))
+      }
+      None => Ok(None),
+    }
+  }
+
+  #[napi]
+  pub fn close_session(&mut self, base_key: Buffer) -> Result<()> {
+    self.inner.close_session(base_key.as_ref());
+    Ok(())
+  }
+
+  #[napi]
+  pub fn open_session(&mut self, base_key: Buffer) -> Result<()> {
+    self.inner.open_session(base_key.as_ref());
+    Ok(())
   }
 
   pub fn get_inner(&self) -> &SessionRecord {
@@ -426,6 +473,13 @@ pub struct EncryptResult {
   pub message_type: u32,
   pub body: Buffer,
   pub registration_id: u32,
+  pub updated_session: String,
+}
+
+#[napi(object)]
+pub struct DecryptResult {
+  pub plaintext: Buffer,
+  pub updated_session: String,
 }
 
 #[napi(object)]
@@ -475,10 +529,14 @@ impl SessionCipherWrapper {
       .encrypt(&mut session, &data)
       .map_err(|e| Error::from_reason(e.to_string()))?;
 
+    let updated_session =
+      serde_json::to_string(&session).map_err(|e| Error::from_reason(e.to_string()))?;
+
     Ok(EncryptResult {
       message_type: encrypted.message_type as u32,
       body: encrypted.body.into(),
       registration_id: encrypted.registration_id,
+      updated_session,
     })
   }
 
@@ -487,7 +545,7 @@ impl SessionCipherWrapper {
     &mut self,
     session_json: String,
     message: Buffer,
-  ) -> Result<Buffer> {
+  ) -> Result<DecryptResult> {
     let mut session: SessionEntry =
       serde_json::from_str(&session_json).map_err(|e| Error::from_reason(e.to_string()))?;
 
@@ -496,7 +554,13 @@ impl SessionCipherWrapper {
       .decrypt_whisper_message(&mut session, &message)
       .map_err(|e| Error::from_reason(e.to_string()))?;
 
-    Ok(plaintext.into())
+    let updated_session =
+      serde_json::to_string(&session).map_err(|e| Error::from_reason(e.to_string()))?;
+
+    Ok(DecryptResult {
+      plaintext: plaintext.into(),
+      updated_session,
+    })
   }
 }
 
