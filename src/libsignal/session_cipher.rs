@@ -67,12 +67,16 @@ impl SessionCipher {
       .remove(&counter)
       .ok_or("Message key not found")?;
 
-    let keys = derive_secrets_int(
-      &message_key.encode_to_vec(),
-      &[0u8; 32],
-      WHISPER_MESSAGE_KEYS,
-      3,
+    let keys = derive_secrets_int(&message_key, &[0u8; 32], WHISPER_MESSAGE_KEYS, 3);
+    assert_eq!(keys.len(), 3);
+    println!(
+      "Derived keys lengths: {}, {}, {}",
+      keys[0].len(),
+      keys[1].len(),
+      keys[2].len()
     );
+    println!("Message key length: {}", message_key.len());
+    println!("Data: {:?}", data);
 
     let whisper_msg = WhisperMessage {
       ephemeral_key: Some(session.current_ratchet.ephemeral_key_pair.pub_key.to_vec()),
@@ -87,8 +91,9 @@ impl SessionCipher {
     let msg_buf = encode_whisper_message(&whisper_msg)?;
 
     let mut mc = Vec::with_capacity(msg_buf.len() + 67); // OMG 677777
-    mc.extend_from_slice(&self.our_identity_key.pub_key);
-    mc.extend_from_slice(&session.index_info.remote_identity_key);
+    mc.extend_from_slice(&session.index_info.remote_identity_key); // sender
+    mc.extend_from_slice(&self.our_identity_key.pub_key); // receiver
+
     mc.push(Self::encode_tuple_byte(VERSION, VERSION)?);
     mc.extend_from_slice(&msg_buf);
     let mac = calculate_mac(&keys[1], &mc).map_err(|_| "Failed to calculate MAC")?;
@@ -219,10 +224,7 @@ impl SessionCipher {
       let message_key = calculate_mac(&key, &[1u8]).map_err(|_| "Failed to derive message key")?;
       key = calculate_mac(&key, &[2u8]).map_err(|_| "Failed to derive next chain key")?;
 
-      chain.message_keys.insert(
-        next_counter,
-        String::from_utf8_lossy(&message_key).to_string(),
-      );
+      chain.message_keys.insert(next_counter, message_key);
     }
 
     chain.chain_key.counter = next_counter;

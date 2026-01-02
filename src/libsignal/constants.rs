@@ -65,7 +65,7 @@ pub struct Chain {
   #[serde(rename = "chainType")]
   pub chain_type: ChainType,
   #[serde(rename = "messageKeys")]
-  pub message_keys: HashMap<i32, String>,
+  pub message_keys: HashMap<i32, Vec<u8>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

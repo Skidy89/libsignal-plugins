@@ -12,7 +12,6 @@ use crate::utils::derive_secrets_int;
 use crate::utils::generate_key_pair_int;
 use crate::utils::shared_secret_int;
 use crate::utils::verify_int;
-use prost::Message;
 use proto_gen::textsecure::PreKeyWhisperMessage;
 
 use std::error::Error as StdError;
@@ -109,7 +108,7 @@ impl SessionBuilder {
       pre_key_pair,              // ourEphemeralKey (can be None)
       Some(signed_pre_key_pair), // ourSignedKey
       identity_key,              // theirIdentityPubKey
-      Some(base_key.as_slice()), // theirEphemeralPubKey
+      Some(base_key),            // theirEphemeralPubKey
       None,                      // theirSignedPubKey
       registration_id,
     )?;
@@ -141,7 +140,8 @@ impl SessionBuilder {
 
     let has_ephemeral = our_ephemeral_key.is_some() && their_ephemeral_pub_key.is_some();
     let secret_len = if has_ephemeral { 32 * 5 } else { 32 * 4 };
-    let mut shared_secret = vec![0xFFu8; secret_len];
+    let mut shared_secret = vec![0u8; secret_len];
+    shared_secret[..32].fill(0xFF);
 
     let a1 = shared_secret_int(their_signed_pub_key, self.our_identity_key.priv_key)?;
     let a2 = shared_secret_int(their_identity_pub_key, our_signed_key.priv_key)?;
@@ -222,13 +222,10 @@ impl SessionBuilder {
 
     let master_key = derive_secrets_int(&shared_secret, &ratchet.root_key, WHISPER_RATCHET, 2);
 
-    let key_base64 =
-      base64::Engine::encode(&base64::engine::general_purpose::STANDARD, &master_key[1]);
-
     let chain = Chain {
       chain_key: ChainKey {
         counter: -1,
-        key: Some(key_base64.encode_to_vec()),
+        key: Some(master_key[1].to_vec()),
       },
       chain_type: ChainType::Sending,
       message_keys: std::collections::HashMap::new(),

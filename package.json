@@ -9,6 +9,7 @@
   },
   "license": "MIT",
   "browser": "browser.js",
+  "type": "commonjs",
   "keywords": [
     "napi-rs",
     "NAPI",

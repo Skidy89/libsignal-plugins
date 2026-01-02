@@ -288,19 +288,30 @@ pub struct KeyPairObject {
 
 #[napi]
 pub struct SessionBuilderWrapper {
-  our_identity_key: KeyPairObject,
+  builder: SessionBuilder,
 }
 
 #[napi]
 impl SessionBuilderWrapper {
   #[napi(constructor)]
-  pub fn new(our_identity_key: KeyPairObject) -> Self {
-    Self {
-      our_identity_key: KeyPairObject {
-        pub_key: Buffer::from(our_identity_key.pub_key.as_ref()),
-        priv_key: Buffer::from(our_identity_key.priv_key.as_ref()),
-      },
-    }
+  pub fn new(our_identity_key: KeyPairObject) -> Result<Self> {
+    let pub_key: [u8; 33] = our_identity_key
+      .pub_key
+      .as_ref()
+      .try_into()
+      .map_err(|_| Error::from_reason("Invalid public key length"))?;
+
+    let priv_key: [u8; 32] = our_identity_key
+      .priv_key
+      .as_ref()
+      .try_into()
+      .map_err(|_| Error::from_reason("Invalid private key length"))?;
+
+    let key_pair = KeyPair { pub_key, priv_key };
+
+    Ok(Self {
+      builder: SessionBuilder::new(key_pair),
+    })
   }
 
   #[napi]
@@ -319,24 +330,8 @@ impl SessionBuilderWrapper {
       }),
     };
 
-    let pub_key: [u8; 33] = self
-      .our_identity_key
-      .pub_key
-      .as_ref()
-      .try_into()
-      .map_err(|_| Error::from_reason("Invalid public key length, expected 33 bytes"))?;
-
-    let priv_key: [u8; 32] = self
-      .our_identity_key
-      .priv_key
-      .as_ref()
-      .try_into()
-      .map_err(|_| Error::from_reason("Invalid private key length, expected 32 bytes"))?;
-
-    let key_pair = KeyPair { pub_key, priv_key };
-
-    let builder = SessionBuilder::new(key_pair);
-    let session = builder
+    let session = self
+      .builder
       .init_outgoing(&device_bundle)
       .map_err(|e| Error::from_reason(e.to_string()))?;
 
@@ -396,24 +391,8 @@ impl SessionBuilderWrapper {
       priv_key: signed_priv_key,
     };
 
-    let pub_key: [u8; 33] = self
-      .our_identity_key
-      .pub_key
-      .as_ref()
-      .try_into()
-      .map_err(|_| Error::from_reason("Invalid public key length, expected 33 bytes"))?;
-
-    let priv_key: [u8; 32] = self
-      .our_identity_key
-      .priv_key
-      .as_ref()
-      .try_into()
-      .map_err(|_| Error::from_reason("Invalid private key length, expected 32 bytes"))?;
-
-    let key_pair = KeyPair { pub_key, priv_key };
-
-    let builder = SessionBuilder::new(key_pair);
-    let session = builder
+    let session = self
+      .builder
       .init_incoming(&msg, pre_key, signed_key)
       .map_err(|e| Error::from_reason(e.to_string()))?;
 
@@ -423,7 +402,7 @@ impl SessionBuilderWrapper {
 
 #[napi(object)]
 pub struct EncryptResult {
-  pub message_type: u32,
+  pub r#type: u32,
   pub body: Buffer,
   pub registration_id: u32,
 }
@@ -476,7 +455,7 @@ impl SessionCipherWrapper {
       .map_err(|e| Error::from_reason(e.to_string()))?;
 
     Ok(EncryptResult {
-      message_type: encrypted.message_type as u32,
+      r#type: encrypted.message_type as u32,
       body: encrypted.body.into(),
       registration_id: encrypted.registration_id,
     })

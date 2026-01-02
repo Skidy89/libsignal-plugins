@@ -62,7 +62,7 @@ export interface DeviceBundleObject {
 export declare function encryptData(key: Buffer, data: Buffer, iv: Buffer): Buffer
 
 export interface EncryptResult {
-  messageType: number
+  type: number
   body: Buffer
   registrationId: number
 }
