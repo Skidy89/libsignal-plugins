@@ -1387,6 +1387,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@skidy89/libsignal-plugins@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@skidy89/libsignal-plugins@workspace:."
+  dependencies:
+    "@emnapi/core": "npm:^1.5.0"
+    "@emnapi/runtime": "npm:^1.5.0"
+    "@napi-rs/cli": "npm:^3.2.0"
+    "@oxc-node/core": "npm:^0.0.35"
+    "@taplo/cli": "npm:^0.7.0"
+    "@tybys/wasm-util": "npm:^0.10.0"
+    "@types/node": "npm:^25.9.3"
+    ava: "npm:^6.4.1"
+    chalk: "npm:^5.6.2"
+    husky: "npm:^9.1.7"
+    lint-staged: "npm:^16.1.6"
+    mitata: "npm:^1.0.34"
+    npm-run-all2: "npm:^8.0.4"
+    oxlint: "npm:^1.14.0"
+    prettier: "npm:^3.6.2"
+    tinybench: "npm:^6.0.0"
+    typescript: "npm:^5.9.2"
+    whatsapp-rust-bridge: "npm:^0.4.8"
+  languageName: unknown
+  linkType: soft
+
 "@taplo/cli@npm:^0.7.0":
   version: 0.7.0
   resolution: "@taplo/cli@npm:0.7.0"
@@ -2393,31 +2418,6 @@ __metadata:
   checksum: 10c0/a0c4e37626d74a9a493539f9f9a94855933fa15ea2f028859a787229a42c5f11803db6f94f1ce7b1d89756c1e80a7c1f11006bac266ec7ce819b75701765ca0a
   languageName: node
   linkType: hard
-
-"libsignal-plugins@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "libsignal-plugins@workspace:."
-  dependencies:
-    "@emnapi/core": "npm:^1.5.0"
-    "@emnapi/runtime": "npm:^1.5.0"
-    "@napi-rs/cli": "npm:^3.2.0"
-    "@oxc-node/core": "npm:^0.0.35"
-    "@taplo/cli": "npm:^0.7.0"
-    "@tybys/wasm-util": "npm:^0.10.0"
-    "@types/node": "npm:^25.9.3"
-    ava: "npm:^6.4.1"
-    chalk: "npm:^5.6.2"
-    husky: "npm:^9.1.7"
-    lint-staged: "npm:^16.1.6"
-    mitata: "npm:^1.0.34"
-    npm-run-all2: "npm:^8.0.4"
-    oxlint: "npm:^1.14.0"
-    prettier: "npm:^3.6.2"
-    tinybench: "npm:^6.0.0"
-    typescript: "npm:^5.9.2"
-    whatsapp-rust-bridge: "npm:^0.4.8"
-  languageName: unknown
-  linkType: soft
 
 "lint-staged@npm:^16.1.6":
   version: 16.4.0
