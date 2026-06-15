@@ -1,6 +1,6 @@
 {
   "name": "libsignal-plugins",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "description": "rust implementations of libsignal protocol primitives for use in JavaScript environments",
   "main": "index.js",
   "repository": {
