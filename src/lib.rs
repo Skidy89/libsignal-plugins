@@ -275,7 +275,7 @@ pub fn encrypt_whisper_message(
   plaintext: Buffer,
   ephemeral_key: Buffer,
   counter: u32,
-  previous_counter: u32,
+  previous_counter: Option<u32>,
   remote_identity: Buffer,
   data: EncryptWhisperMessage,
 ) -> Result<Buffer> {
