@@ -294,30 +294,34 @@ pub fn encrypt_whisper_message(
   Ok(Buffer::from(result))
 }
 
-#[napi]
 pub fn fill_message_keys(
   chain_key: Buffer,
-  current_counter: u32,
-  target_counter: u32,
+  current_counter: i64,
+  target_counter: i64,
 ) -> Result<FillMessageKeysResult> {
+  if current_counter < -1 {
+    return Err(Error::from_reason("current_counter cannot be less than -1"));
+  }
+  if target_counter <= current_counter {
+    return Err(Error::from_reason(
+      "target_counter must be greater than current_counter",
+    ));
+  }
+
   let mut key: [u8; 32] = chain_key
     .as_ref()
     .try_into()
     .map_err(|_| Error::from_reason("Invalid chain key length"))?;
 
   let mut counter = current_counter;
-
-  let mut message_keys = Vec::with_capacity((target_counter - current_counter) as usize);
+  let steps = (target_counter - current_counter) as usize; // ahora seguro porque target > current
+  let mut message_keys = Vec::with_capacity(steps);
 
   while counter < target_counter {
     let msg_key = hmac_sha256(&key, &[1]);
-
     let next_chain_key = hmac_sha256(&key, &[2]);
-
     message_keys.push(msg_key);
-
     key = next_chain_key;
-
     counter += 1;
   }
 

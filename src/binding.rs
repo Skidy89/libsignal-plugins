@@ -35,6 +35,6 @@ pub struct GeneratePreKey {
 #[napi(object)]
 pub struct FillMessageKeysResult {
   pub chain_key: Buffer,
-  pub counter: u32,
+  pub counter: i64,
   pub message_keys: Vec<Buffer>,
 }
