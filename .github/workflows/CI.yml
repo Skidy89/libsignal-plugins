@@ -10,8 +10,8 @@ on:
   push:
     branches:
       - main
-    tags-ignore:
-      - '**'
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'          #
     paths-ignore:
       - '**/*.md'
       - LICENSE
@@ -36,13 +36,9 @@ jobs:
         with:
           node-version: 24
           cache: yarn
-      - name: Install protoc
-        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
 
-      - name: Install protoc (Windows)
-        if: ${{ runner.os == 'Windows' }}
-        run: choco install protoc
-      
+      - name: Install protoc (Linux)
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -97,13 +93,14 @@ jobs:
         with:
           node-version: 24
           cache: yarn
-      - name: Install protoc
-        if: ${{ runner.os == 'Linux' }}
-        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
-      - name: Install protoc (Windows)
-        if: ${{ runner.os == 'Windows' }}
-        run: choco install protoc
 
+      - name: Install protoc (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+
+      - name: Install protoc (Windows)
+        if: runner.os == 'Windows'
+        run: choco install protoc
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -155,6 +152,8 @@ jobs:
     needs:
       - lint
       - build
+    
+    if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
       - uses: actions/checkout@v6
@@ -176,24 +175,25 @@ jobs:
         with:
           path: artifacts
 
-      - name: Move artifacts
-        run: yarn artifacts
+      - name: Move artifacts to npm directories
+        run: napi artifacts
 
-      - name: List packages
+      - name: List npm packages
         run: ls -R ./npm
 
-      - name: Publish
+      - name: Sync package.json version with tag
+        run: |
+          if [[ $GITHUB_REF =~ refs/tags/v([0-9]+\.[0-9]+\.[0-9]+) ]]; then
+          VERSION=${BASH_REMATCH[1]}
+          npm version $VERSION --no-git-tag-version --allow-same-version
+          echo "Set package.json version to $VERSION"
+          else
+          echo "Not a tag, skipping version sync"
+          fi
+      - name: Publish to npm
         run: |
           npm config set provenance true
-          if git log -1 --pretty=%B | grep -E "^[0-9]+\.[0-9]+\.[0-9]+$"; then
-            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-            npm publish --access public
-          elif git log -1 --pretty=%B | grep -E "^[0-9]+\.[0-9]+\.[0-9]+"; then
-            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-            npm publish --tag next --access public
-          else
-            echo "Not a release, skipping publish"
-          fi
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+          npm publish --access public
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
