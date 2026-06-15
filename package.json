@@ -1,6 +1,6 @@
 {
   "name": "libsignal-plugins",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "rust implementations of libsignal protocol primitives for use in JavaScript environments",
   "main": "index.js",
   "repository": {
@@ -54,7 +54,7 @@
     "lint": "oxlint .",
     "prepublishOnly": "napi prepublish -t npm",
     "test": "ava",
-    "preversion": "napi build --platform && git add .",
+    "preversion": "yarn install && napi build --platform && git add .",
     "version": "napi version",
     "prepare": "husky"
   },
