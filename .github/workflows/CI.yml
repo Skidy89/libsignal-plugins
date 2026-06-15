@@ -176,7 +176,7 @@ jobs:
           path: artifacts
 
       - name: Move artifacts to npm directories
-        run: napi artifacts
+        run: yarn napi artifacts
 
       - name: List npm packages
         run: ls -R ./npm
