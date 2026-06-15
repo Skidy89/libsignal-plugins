@@ -1,7 +1,7 @@
 {
   "name": "libsignal-plugins",
-  "version": "1.0.17",
-  "description": "Template project for writing node package with napi-rs",
+  "version": "1.0.18",
+  "description": "rust implementations of libsignal protocol primitives for use in JavaScript environments",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -10,12 +10,11 @@
   "license": "MIT",
   "browser": "browser.js",
   "keywords": [
-    "napi-rs",
-    "NAPI",
-    "N-API",
-    "Rust",
-    "node-addon",
-    "node-addon-api"
+    "libsignal",
+    "signal-protocol",
+    "whatsapp",
+    "baileys",
+    "signal"
   ],
   "files": [
     "index.d.ts",
