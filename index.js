@@ -75,10 +75,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-android-arm64')
-        const bindingPackageVersion = require('libsignal-plugins-android-arm64/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-android-arm64')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-android-arm64/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -91,10 +91,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-android-arm-eabi')
-        const bindingPackageVersion = require('libsignal-plugins-android-arm-eabi/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-android-arm-eabi')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-android-arm-eabi/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -112,10 +112,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-win32-x64-gnu')
-        const bindingPackageVersion = require('libsignal-plugins-win32-x64-gnu/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-win32-x64-gnu')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-win32-x64-gnu/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -128,10 +128,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-win32-x64-msvc')
-        const bindingPackageVersion = require('libsignal-plugins-win32-x64-msvc/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-win32-x64-msvc')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-win32-x64-msvc/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -145,10 +145,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-win32-ia32-msvc')
-        const bindingPackageVersion = require('libsignal-plugins-win32-ia32-msvc/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-win32-ia32-msvc')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-win32-ia32-msvc/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -161,10 +161,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-win32-arm64-msvc')
-        const bindingPackageVersion = require('libsignal-plugins-win32-arm64-msvc/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-win32-arm64-msvc')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-win32-arm64-msvc/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -180,10 +180,10 @@ function requireNative() {
       loadErrors.push(e)
     }
     try {
-      const binding = require('libsignal-plugins-darwin-universal')
-      const bindingPackageVersion = require('libsignal-plugins-darwin-universal/package.json').version
-      if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-        throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+      const binding = require('@skidy89/libsignal-plugins-darwin-universal')
+      const bindingPackageVersion = require('@skidy89/libsignal-plugins-darwin-universal/package.json').version
+      if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+        throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
       }
       return binding
     } catch (e) {
@@ -196,10 +196,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-darwin-x64')
-        const bindingPackageVersion = require('libsignal-plugins-darwin-x64/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-darwin-x64')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-darwin-x64/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -212,10 +212,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-darwin-arm64')
-        const bindingPackageVersion = require('libsignal-plugins-darwin-arm64/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-darwin-arm64')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-darwin-arm64/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -232,10 +232,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-freebsd-x64')
-        const bindingPackageVersion = require('libsignal-plugins-freebsd-x64/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-freebsd-x64')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-freebsd-x64/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -248,10 +248,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-freebsd-arm64')
-        const bindingPackageVersion = require('libsignal-plugins-freebsd-arm64/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-freebsd-arm64')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-freebsd-arm64/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -269,10 +269,10 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('libsignal-plugins-linux-x64-musl')
-          const bindingPackageVersion = require('libsignal-plugins-linux-x64-musl/package.json').version
-          if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          const binding = require('@skidy89/libsignal-plugins-linux-x64-musl')
+          const bindingPackageVersion = require('@skidy89/libsignal-plugins-linux-x64-musl/package.json').version
+          if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -285,10 +285,10 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('libsignal-plugins-linux-x64-gnu')
-          const bindingPackageVersion = require('libsignal-plugins-linux-x64-gnu/package.json').version
-          if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          const binding = require('@skidy89/libsignal-plugins-linux-x64-gnu')
+          const bindingPackageVersion = require('@skidy89/libsignal-plugins-linux-x64-gnu/package.json').version
+          if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -303,10 +303,10 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('libsignal-plugins-linux-arm64-musl')
-          const bindingPackageVersion = require('libsignal-plugins-linux-arm64-musl/package.json').version
-          if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          const binding = require('@skidy89/libsignal-plugins-linux-arm64-musl')
+          const bindingPackageVersion = require('@skidy89/libsignal-plugins-linux-arm64-musl/package.json').version
+          if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -319,10 +319,10 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('libsignal-plugins-linux-arm64-gnu')
-          const bindingPackageVersion = require('libsignal-plugins-linux-arm64-gnu/package.json').version
-          if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          const binding = require('@skidy89/libsignal-plugins-linux-arm64-gnu')
+          const bindingPackageVersion = require('@skidy89/libsignal-plugins-linux-arm64-gnu/package.json').version
+          if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -337,10 +337,10 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('libsignal-plugins-linux-arm-musleabihf')
-          const bindingPackageVersion = require('libsignal-plugins-linux-arm-musleabihf/package.json').version
-          if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          const binding = require('@skidy89/libsignal-plugins-linux-arm-musleabihf')
+          const bindingPackageVersion = require('@skidy89/libsignal-plugins-linux-arm-musleabihf/package.json').version
+          if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -353,10 +353,10 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('libsignal-plugins-linux-arm-gnueabihf')
-          const bindingPackageVersion = require('libsignal-plugins-linux-arm-gnueabihf/package.json').version
-          if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          const binding = require('@skidy89/libsignal-plugins-linux-arm-gnueabihf')
+          const bindingPackageVersion = require('@skidy89/libsignal-plugins-linux-arm-gnueabihf/package.json').version
+          if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -371,10 +371,10 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('libsignal-plugins-linux-loong64-musl')
-          const bindingPackageVersion = require('libsignal-plugins-linux-loong64-musl/package.json').version
-          if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          const binding = require('@skidy89/libsignal-plugins-linux-loong64-musl')
+          const bindingPackageVersion = require('@skidy89/libsignal-plugins-linux-loong64-musl/package.json').version
+          if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -387,10 +387,10 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('libsignal-plugins-linux-loong64-gnu')
-          const bindingPackageVersion = require('libsignal-plugins-linux-loong64-gnu/package.json').version
-          if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          const binding = require('@skidy89/libsignal-plugins-linux-loong64-gnu')
+          const bindingPackageVersion = require('@skidy89/libsignal-plugins-linux-loong64-gnu/package.json').version
+          if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -405,10 +405,10 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('libsignal-plugins-linux-riscv64-musl')
-          const bindingPackageVersion = require('libsignal-plugins-linux-riscv64-musl/package.json').version
-          if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          const binding = require('@skidy89/libsignal-plugins-linux-riscv64-musl')
+          const bindingPackageVersion = require('@skidy89/libsignal-plugins-linux-riscv64-musl/package.json').version
+          if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -421,10 +421,10 @@ function requireNative() {
           loadErrors.push(e)
         }
         try {
-          const binding = require('libsignal-plugins-linux-riscv64-gnu')
-          const bindingPackageVersion = require('libsignal-plugins-linux-riscv64-gnu/package.json').version
-          if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-            throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+          const binding = require('@skidy89/libsignal-plugins-linux-riscv64-gnu')
+          const bindingPackageVersion = require('@skidy89/libsignal-plugins-linux-riscv64-gnu/package.json').version
+          if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+            throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
           }
           return binding
         } catch (e) {
@@ -438,10 +438,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-linux-ppc64-gnu')
-        const bindingPackageVersion = require('libsignal-plugins-linux-ppc64-gnu/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-linux-ppc64-gnu')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-linux-ppc64-gnu/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -454,10 +454,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-linux-s390x-gnu')
-        const bindingPackageVersion = require('libsignal-plugins-linux-s390x-gnu/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-linux-s390x-gnu')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-linux-s390x-gnu/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -474,10 +474,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-openharmony-arm64')
-        const bindingPackageVersion = require('libsignal-plugins-openharmony-arm64/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-openharmony-arm64')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-openharmony-arm64/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -490,10 +490,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-openharmony-x64')
-        const bindingPackageVersion = require('libsignal-plugins-openharmony-x64/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-openharmony-x64')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-openharmony-x64/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -506,10 +506,10 @@ function requireNative() {
         loadErrors.push(e)
       }
       try {
-        const binding = require('libsignal-plugins-openharmony-arm')
-        const bindingPackageVersion = require('libsignal-plugins-openharmony-arm/package.json').version
-        if (bindingPackageVersion !== '1.0.27' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
-          throw new Error(`Native binding package version mismatch, expected 1.0.27 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
+        const binding = require('@skidy89/libsignal-plugins-openharmony-arm')
+        const bindingPackageVersion = require('@skidy89/libsignal-plugins-openharmony-arm/package.json').version
+        if (bindingPackageVersion !== '1.0.29' && process.env.NAPI_RS_ENFORCE_VERSION_CHECK && process.env.NAPI_RS_ENFORCE_VERSION_CHECK !== '0') {
+          throw new Error(`Native binding package version mismatch, expected 1.0.29 but got ${bindingPackageVersion}. You can reinstall dependencies to fix this issue.`)
         }
         return binding
       } catch (e) {
@@ -548,7 +548,7 @@ if (!nativeBinding || forceWasi) {
   }
   if (!nativeBinding || forceWasi) {
     try {
-      wasiBinding = require('libsignal-plugins-wasm32-wasi')
+      wasiBinding = require('@skidy89/libsignal-plugins-wasm32-wasi')
       nativeBinding = wasiBinding
     } catch (err) {
       if (forceWasi) {
