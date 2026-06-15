@@ -120,7 +120,7 @@ pub fn encrypt_whisper_message_int(
   let whisper = WhisperMessage {
     ephemeral_key: ephemeral_key.to_vec().into(),
     counter: Some(counter),
-    previous_counter: previous_counter,
+    previous_counter,
     ciphertext: Some(ciphertext),
   };
 

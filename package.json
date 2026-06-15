@@ -1,6 +1,6 @@
 {
   "name": "@skidy89/libsignal-plugins",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "rust implementations of libsignal protocol primitives for use in JavaScript environments",
   "main": "index.js",
   "repository": {
