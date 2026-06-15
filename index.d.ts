@@ -19,7 +19,7 @@ export declare function deriveSecrets(input: Buffer, salt: Buffer, info: Buffer,
 
 export declare function encryptData(key: Buffer, data: Buffer, iv: Buffer): Buffer
 
-export declare function encryptWhisperMessage(messageKey: Buffer, plaintext: Buffer, ephemeralKey: Buffer, counter: number, previousCounter: number, remoteIdentity: Buffer, data: EncryptWhisperMessage): Buffer
+export declare function encryptWhisperMessage(messageKey: Buffer, plaintext: Buffer, ephemeralKey: Buffer, counter: number, previousCounter: number | undefined | null, remoteIdentity: Buffer, data: EncryptWhisperMessage): Buffer
 
 export interface EncryptWhisperMessage {
   ourIdentity: Buffer

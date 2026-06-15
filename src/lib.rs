@@ -294,6 +294,7 @@ pub fn encrypt_whisper_message(
   Ok(Buffer::from(result))
 }
 
+#[napi]
 pub fn fill_message_keys(
   chain_key: Buffer,
   current_counter: i64,
