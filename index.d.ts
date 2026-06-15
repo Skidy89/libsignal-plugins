@@ -19,6 +19,21 @@ export declare function deriveSecrets(input: Buffer, salt: Buffer, info: Buffer,
 
 export declare function encryptData(key: Buffer, data: Buffer, iv: Buffer): Buffer
 
+export declare function encryptWhisperMessage(messageKey: Buffer, plaintext: Buffer, ephemeralKey: Buffer, counter: number, previousCounter: number, remoteIdentity: Buffer, data: EncryptWhisperMessage): Buffer
+
+export interface EncryptWhisperMessage {
+  ourIdentity: Buffer
+  version: number
+}
+
+export declare function fillMessageKeys(chainKey: Buffer, currentCounter: number, targetCounter: number): FillMessageKeysResult
+
+export interface FillMessageKeysResult {
+  chainKey: Buffer
+  counter: number
+  messageKeys: Array<Buffer>
+}
+
 export declare function generateKeyPair(): CreateKeyPair
 
 export declare function generatePreKey(keyId: number): GeneratePreKey
@@ -38,8 +53,6 @@ export interface GenerateSignedPreKey {
   pubKey: Buffer
   signature: Buffer
 }
-
-export declare function groupEncrypt(iteration: number, chainKey: Buffer, plaintext: Buffer): Buffer
 
 export declare function hash(data: Buffer): Buffer
 

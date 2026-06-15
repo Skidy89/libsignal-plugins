@@ -20,7 +20,7 @@ pub struct PreKey {
 pub fn generate_registration_id_int() -> u16 {
   let mut rng = OsRng;
   let registration_id: u16 = rng.next_u32() as u16;
-  (registration_id & 0x3fff) as u16 // ox3fff to limit to 14 bits
+  registration_id & 0x3fff // ox3fff to limit to 14 bits
 }
 
 pub fn generate_signed_pre_key_int(

@@ -1,47 +1,24 @@
-use crate::binding::{CreateKeyPair, GeneratePreKey, GenerateSignedPreKey, JsKeyPair};
-use crate::group_cipher::encrypt;
+use crate::binding::{
+  CreateKeyPair, FillMessageKeysResult, GeneratePreKey, GenerateSignedPreKey, JsKeyPair,
+};
 use crate::keyhelper::{generate_pre_key_int, generate_registration_id_int};
-use crate::sender_key_state::SenderKeyState;
 use crate::utils::{
   create_key_pair_int, curve25519_sign_inner, derive_secrets_int, generate_key_pair_int,
-  scrub_pub_key, shared_secret_int, verify_int,
+  hmac_sha256, scrub_pub_key, shared_secret_int, verify_int,
 };
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 mod binding;
 mod crypto;
-mod group_cipher;
 mod keyhelper;
-mod libsignal;
-mod sender_key_state;
 mod utils;
-
-// not implemented yet, placeholder
-// thread '<unnamed>' panicked at src\sender_key_state.rs:22:29:
-//range end index 48 out of range for slice of length 32
-//note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
-#[napi]
-pub fn group_encrypt(iteration: u32, chain_key: Buffer, plaintext: Buffer) -> Result<Buffer> {
-  if chain_key.len() != 32 {
-    return Err(Error::from_reason("Invalid chain key length"));
-  }
-
-  let mut state = SenderKeyState {
-    iteration,
-    chain_key: chain_key.as_ref().try_into().unwrap(),
-  };
-
-  let ciphertext = encrypt(&mut state, plaintext.as_ref());
-
-  Ok(Buffer::from(ciphertext))
-}
 
 // generates a key pair given a private key
 // private key is a Buffer of length 32
 // returns an object with pubKey and privKey (both Buffers)
 // uses
 #[napi]
-pub fn key_pair<'a>(priv_key: Buffer) -> Result<JsKeyPair> {
+pub fn key_pair(priv_key: Buffer) -> Result<JsKeyPair> {
   if priv_key.len() != 32 {
     return Err(Error::from_reason("Invalid private key length"));
   }
@@ -58,7 +35,7 @@ pub fn key_pair<'a>(priv_key: Buffer) -> Result<JsKeyPair> {
 
 #[napi]
 pub fn shared_secret(pub_key: Buffer, priv_key: Buffer) -> Result<Buffer> {
-  let pub_key = scrub_pub_key(&pub_key).map_err(|e| Error::from_reason(e))?;
+  let pub_key = scrub_pub_key(&pub_key).map_err(Error::from_reason)?;
   if priv_key.len() != 32 {
     return Err(Error::from_reason("Invalid private key length"));
   }
@@ -164,7 +141,7 @@ pub fn generate_registration_id() -> Result<u16> {
 }
 
 #[napi]
-pub fn generate_signed_pre_key<'a>(
+pub fn generate_signed_pre_key(
   identity_priv_key: Buffer,
   identity_pub_key: Buffer,
   signed_pre_key_id: u32,
@@ -284,4 +261,72 @@ pub fn calculate_mac(key: Buffer, data: Buffer) -> Result<Buffer> {
 pub fn hash(data: Buffer) -> Result<Buffer> {
   let hash = crypto::hash_int(data.as_ref());
   Ok(Buffer::from(hash))
+}
+
+#[napi(object)]
+pub struct EncryptWhisperMessage {
+  pub our_identity: Buffer,
+  pub version: u8,
+}
+
+#[napi]
+pub fn encrypt_whisper_message(
+  message_key: Buffer,
+  plaintext: Buffer,
+  ephemeral_key: Buffer,
+  counter: u32,
+  previous_counter: u32,
+  remote_identity: Buffer,
+  data: EncryptWhisperMessage,
+) -> Result<Buffer> {
+  let result = crypto::encrypt_whisper_message_int(
+    message_key.as_ref(),
+    plaintext.as_ref(),
+    ephemeral_key.as_ref(),
+    counter,
+    previous_counter,
+    data.our_identity.as_ref(),
+    remote_identity.as_ref(),
+    data.version,
+  )
+  .map_err(|e| Error::from_reason(format!("Whisper message encryption failed: {:?}", e)))?;
+
+  Ok(Buffer::from(result))
+}
+
+#[napi]
+pub fn fill_message_keys(
+  chain_key: Buffer,
+  current_counter: u32,
+  target_counter: u32,
+) -> Result<FillMessageKeysResult> {
+  let mut key: [u8; 32] = chain_key
+    .as_ref()
+    .try_into()
+    .map_err(|_| Error::from_reason("Invalid chain key length"))?;
+
+  let mut counter = current_counter;
+
+  let mut message_keys = Vec::with_capacity((target_counter - current_counter) as usize);
+
+  while counter < target_counter {
+    let msg_key = hmac_sha256(&key, &[1]);
+
+    let next_chain_key = hmac_sha256(&key, &[2]);
+
+    message_keys.push(msg_key);
+
+    key = next_chain_key;
+
+    counter += 1;
+  }
+
+  Ok(FillMessageKeysResult {
+    chain_key: Buffer::from(key.to_vec()),
+    counter,
+    message_keys: message_keys
+      .into_iter()
+      .map(|arr| arr.to_vec().into())
+      .collect(),
+  })
 }

@@ -117,29 +117,44 @@ pub fn curve25519_sign_inner(privkey: &[u8; 32], msg: &[u8]) -> [u8; 64] {
   sig_out
 }
 
+type HmacSha256 = Hmac<Sha256>;
+
+pub fn hmac_sha256(key: &[u8], data: &[u8]) -> [u8; 32] {
+  let mut mac = HmacSha256::new_from_slice(key).expect("invalid key");
+
+  mac.update(data);
+
+  mac.finalize().into_bytes().into()
+}
+
 pub fn derive_secrets_int(input: &[u8], salt: &[u8], info: &[u8], chunks: usize) -> Vec<[u8; 32]> {
   assert_eq!(salt.len(), 32);
-  assert!(chunks >= 1 && chunks <= 3);
+  assert!((1..=3).contains(&chunks));
+  //  RFC 5869
+  let prk = hmac_sha256(salt, input);
+  let mut result = Vec::with_capacity(chunks);
+  let mut previous: Option<[u8; 32]> = None;
+  for counter in 1..=chunks {
+    let mut block = Vec::with_capacity(32 + info.len() + 1);
 
-  type HmacSha256 = Hmac<Sha256>;
-  let prk = HmacSha256::new_from_slice(salt)
-    .unwrap()
-    .chain_update(input)
-    .finalize()
-    .into_bytes();
+    if let Some(prev) = previous {
+      block.extend_from_slice(&prev);
+    }
 
-  let mut prev = Vec::new();
-  let mut output = Vec::with_capacity(chunks);
+    block.extend_from_slice(info);
+    block.push(counter as u8);
 
-  for i in 1..=chunks {
-    let mut hmac = HmacSha256::new_from_slice(&prk).unwrap();
-    hmac.update(&prev);
-    hmac.update(info);
-    hmac.update(&[i as u8]);
-    let result = hmac.finalize().into_bytes();
-    output.push(result.into());
-    prev = result.to_vec();
+    let output = hmac_sha256(&prk, &block);
+
+    result.push(
+      output
+        .to_vec()
+        .try_into()
+        .expect("HMAC output should be 32 bytes"),
+    );
+
+    previous = Some(output);
   }
 
-  output
+  result
 }

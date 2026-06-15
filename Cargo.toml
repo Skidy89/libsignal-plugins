@@ -24,6 +24,7 @@ hmac = "0.12.1"
 cbc = "0.1"
 cipher = "0.4"
 proto-gen = { path = "./proto-gen", version = "0.1.0"}
+prost = "0.14.4"
 
 
 

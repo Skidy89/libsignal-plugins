@@ -31,3 +31,10 @@ pub struct GeneratePreKey {
   pub priv_key: Buffer,
   pub key_id: u32,
 }
+
+#[napi(object)]
+pub struct FillMessageKeysResult {
+  pub chain_key: Buffer,
+  pub counter: u32,
+  pub message_keys: Vec<Buffer>,
+}
