@@ -2394,41 +2394,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libsignal-plugins-linux-arm64-gnu@npm:1.0.18":
-  version: 1.0.18
-  resolution: "libsignal-plugins-linux-arm64-gnu@npm:1.0.18"
-  conditions: os=linux & cpu=arm64 & libc=glibc
-  languageName: node
-  linkType: hard
-
-"libsignal-plugins-linux-arm64-musl@npm:1.0.18":
-  version: 1.0.18
-  resolution: "libsignal-plugins-linux-arm64-musl@npm:1.0.18"
-  conditions: os=linux & cpu=arm64 & libc=musl
-  languageName: node
-  linkType: hard
-
-"libsignal-plugins-linux-x64-gnu@npm:1.0.18":
-  version: 1.0.18
-  resolution: "libsignal-plugins-linux-x64-gnu@npm:1.0.18"
-  conditions: os=linux & cpu=x64 & libc=glibc
-  languageName: node
-  linkType: hard
-
-"libsignal-plugins-linux-x64-musl@npm:1.0.18":
-  version: 1.0.18
-  resolution: "libsignal-plugins-linux-x64-musl@npm:1.0.18"
-  conditions: os=linux & cpu=x64 & libc=musl
-  languageName: node
-  linkType: hard
-
-"libsignal-plugins-win32-x64-msvc@npm:1.0.18":
-  version: 1.0.18
-  resolution: "libsignal-plugins-win32-x64-msvc@npm:1.0.18"
-  conditions: os=win32 & cpu=x64
-  languageName: node
-  linkType: hard
-
 "libsignal-plugins@workspace:.":
   version: 0.0.0-use.local
   resolution: "libsignal-plugins@workspace:."
@@ -2443,11 +2408,6 @@ __metadata:
     ava: "npm:^6.4.1"
     chalk: "npm:^5.6.2"
     husky: "npm:^9.1.7"
-    libsignal-plugins-linux-arm64-gnu: "npm:1.0.18"
-    libsignal-plugins-linux-arm64-musl: "npm:1.0.18"
-    libsignal-plugins-linux-x64-gnu: "npm:1.0.18"
-    libsignal-plugins-linux-x64-musl: "npm:1.0.18"
-    libsignal-plugins-win32-x64-msvc: "npm:1.0.18"
     lint-staged: "npm:^16.1.6"
     mitata: "npm:^1.0.34"
     npm-run-all2: "npm:^8.0.4"
@@ -2456,17 +2416,6 @@ __metadata:
     tinybench: "npm:^6.0.0"
     typescript: "npm:^5.9.2"
     whatsapp-rust-bridge: "npm:^0.4.8"
-  dependenciesMeta:
-    libsignal-plugins-linux-arm64-gnu:
-      optional: true
-    libsignal-plugins-linux-arm64-musl:
-      optional: true
-    libsignal-plugins-linux-x64-gnu:
-      optional: true
-    libsignal-plugins-linux-x64-musl:
-      optional: true
-    libsignal-plugins-win32-x64-msvc:
-      optional: true
   languageName: unknown
   linkType: soft
 
