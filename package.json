@@ -1,5 +1,5 @@
 {
-  "name": "@skidy89/libsignal-plugins",
+  "name": "libsignal-plugins",
   "version": "1.0.29",
   "description": "rust implementations of libsignal protocol primitives for use in JavaScript environments",
   "main": "index.js",
