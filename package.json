@@ -1,6 +1,6 @@
 {
   "name": "libsignal-plugins",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "rust implementations of libsignal protocol primitives for use in JavaScript environments",
   "main": "index.js",
   "repository": {
@@ -112,10 +112,10 @@
   },
   "packageManager": "yarn@4.12.0",
   "optionalDependencies": {
-    "libsignal-plugins-win32-x64-msvc": "1.0.24",
-    "libsignal-plugins-linux-x64-gnu": "1.0.24",
-    "libsignal-plugins-linux-x64-musl": "1.0.24",
-    "libsignal-plugins-linux-arm64-gnu": "1.0.24",
-    "libsignal-plugins-linux-arm64-musl": "1.0.24"
+    "libsignal-plugins-win32-x64-msvc": "1.0.25",
+    "libsignal-plugins-linux-x64-gnu": "1.0.25",
+    "libsignal-plugins-linux-x64-musl": "1.0.25",
+    "libsignal-plugins-linux-arm64-gnu": "1.0.25",
+    "libsignal-plugins-linux-arm64-musl": "1.0.25"
   }
 }
