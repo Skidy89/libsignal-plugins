@@ -183,13 +183,7 @@ jobs:
 
       - name: Sync package.json version with tag
         run: |
-          if [[ $GITHUB_REF =~ refs/tags/v([0-9]+\.[0-9]+\.[0-9]+) ]]; then
-          VERSION=${BASH_REMATCH[1]}
-          npm version $VERSION --no-git-tag-version --allow-same-version
-          echo "Set package.json version to $VERSION"
-          else
-          echo "Not a tag, skipping version sync"
-          fi
+          npm pkg set version=${GITHUB_REF#refs/tags/v}
       - name: Publish to npm
         run: |
           npm config set provenance true
