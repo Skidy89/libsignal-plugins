@@ -307,6 +307,9 @@ pub fn fill_message_keys(
       "target_counter must be greater than current_counter",
     ));
   }
+  if target_counter - current_counter > 500 {
+    return Err(Error::from_reason("counter gap cannot be greater than 500"));
+  }
 
   let mut key: [u8; 32] = chain_key
     .as_ref()
