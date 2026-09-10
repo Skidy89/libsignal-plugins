@@ -133,3 +133,4 @@ package-lock.json
 bench/curve.js
 proto-gen/target
 *.md
+libsignal-node
