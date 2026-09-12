@@ -46,7 +46,7 @@ jobs:
           components: clippy, rustfmt
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --mode=skip-build
 
       - name: Oxlint
         run: yarn lint
@@ -129,7 +129,7 @@ jobs:
           tool: cargo-zigbuild
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --mode=skip-build
 
       - name: Build
         run: ${{ matrix.settings.build }}
@@ -164,7 +164,7 @@ jobs:
           cache: yarn
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --mode=skip-build
 
       - name: Download artifacts
         uses: actions/download-artifact@v6
