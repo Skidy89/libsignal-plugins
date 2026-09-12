@@ -20,7 +20,6 @@
     "index.d.ts",
     "index.js",
     "browser.js",
-    "*.node",
     "Cargo.toml",
     "Cargo.lock",
     "native",
@@ -59,7 +58,6 @@
     "format:rs": "cargo fmt",
     "lint": "oxlint .",
     "prepublishOnly": "napi prepublish -t npm",
-    "install": "napi build --platform --release",
     "test": "ava",
     "version": "napi version",
     "napi": "napi"
@@ -115,8 +113,5 @@
     "singleQuote": true,
     "arrowParens": "always"
   },
-  "packageManager": "yarn@4.12.0",
-  "dependencies": {
-    "@napi-rs/cli": "^3.2.0"
-  }
+  "packageManager": "yarn@4.12.0"
 }
