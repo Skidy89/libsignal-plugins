@@ -7,6 +7,16 @@
 
 LibSignal Plugins is a Rust + NAPI-RS library for cryptographic operations like key generation, signature verification, group encryption, and more, compatible with Node.js via TypeScript bindings.
 
+## Installation from GitHub
+
+Native binaries are published as assets in GitHub Releases. Install a release tag directly instead of installing the native packages from npm:
+
+```bash
+npm install github:Skidy89/libsignal-plugins#v1.0.35
+```
+
+The install script downloads only the binary required by the current platform. Supported targets are Windows x64, Linux x64 (glibc or musl), and Linux arm64 (glibc or musl).
+
 
 # Usage & Guide
 

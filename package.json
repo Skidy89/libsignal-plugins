@@ -20,6 +20,8 @@
     "index.d.ts",
     "index.js",
     "browser.js",
+    "install.js",
+    "*.node",
     "cargo.toml",
     "native",
     "build.rs",
@@ -53,6 +55,7 @@
     "format:rs": "cargo fmt",
     "lint": "oxlint .",
     "prepublishOnly": "napi prepublish -t npm",
+    "postinstall": "node install.js",
     "test": "ava",
     "version": "napi version",
     "prepare": "husky",
@@ -110,12 +113,5 @@
     "singleQuote": true,
     "arrowParens": "always"
   },
-  "packageManager": "yarn@4.12.0",
-  "optionalDependencies": {
-    "@skidy89/libsignal-plugins-win32-x64-msvc": "1.0.35",
-    "@skidy89/libsignal-plugins-linux-x64-gnu": "1.0.35",
-    "@skidy89/libsignal-plugins-linux-x64-musl": "1.0.35",
-    "@skidy89/libsignal-plugins-linux-arm64-gnu": "1.0.35",
-    "@skidy89/libsignal-plugins-linux-arm64-musl": "1.0.35"
-  }
+  "packageManager": "yarn@4.12.0"
 }

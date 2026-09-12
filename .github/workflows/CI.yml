@@ -144,11 +144,10 @@ jobs:
           if-no-files-found: error
 
   publish:
-    name: Publish
+    name: Publish GitHub Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      id-token: write
     needs:
       - lint
       - build
@@ -167,27 +166,18 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Create npm dirs
-        run: yarn napi create-npm-dirs
-
       - name: Download artifacts
         uses: actions/download-artifact@v6
         with:
           path: artifacts
 
-      - name: Move artifacts to npm directories
-        run: yarn napi artifacts
+      - name: Collect native binaries
+        shell: bash
+        run: find artifacts -type f \( -name '*.node' -o -name '*.wasm' \) -exec cp {} . \;
 
-      - name: List npm packages
-        run: ls -R ./npm
-
-      - name: Sync package.json version with tag
-        run: |
-          npm pkg set version=${GITHUB_REF#refs/tags/v}
-      - name: Publish to npm
-        run: |
-          npm config set provenance true
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-          npm publish --access public
+      - name: Publish native binaries to GitHub Release
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 || gh release create "$GITHUB_REF_NAME" --verify-tag --generate-notes
+          gh release upload "$GITHUB_REF_NAME" ./*.node --clobber
