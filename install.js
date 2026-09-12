@@ -1,16 +1,25 @@
-const { createWriteStream, existsSync, readFileSync, renameSync, unlinkSync } = require('fs')
+const { existsSync } = require('fs')
 const { join } = require('path')
-const { pipeline } = require('stream/promises')
+const { spawnSync } = require('child_process')
 
-const packageJson = JSON.parse(readFileSync(join(__dirname, 'package.json'), 'utf8'))
-const binaryName = getBinaryName()
+const packageRoot = __dirname
+const nativeBinding = join(packageRoot, getBinaryName())
 
-if (binaryName && !existsSync(join(__dirname, binaryName))) {
-  installBinary(binaryName).catch((error) => {
-    console.error(`Unable to install the native binding for ${process.platform}-${process.arch}.`)
-    console.error(error.message)
-    process.exitCode = 1
+if (!existsSync(nativeBinding)) {
+  const napiCommand = process.platform === 'win32' ? 'napi.cmd' : 'napi'
+  const result = spawnSync(napiCommand, ['build', '--platform', '--release'], {
+    cwd: packageRoot,
+    stdio: 'inherit',
+    shell: false,
   })
+
+  if (result.error) {
+    throw new Error(`Unable to build the native binding. Install Rust and Node.js build tools first: ${result.error.message}`)
+  }
+
+  if (result.status !== 0) {
+    process.exit(result.status ?? 1)
+  }
 }
 
 function getBinaryName() {
@@ -35,25 +44,5 @@ function isMusl() {
     return !report?.header?.glibcVersionRuntime
   } catch {
     return false
-  }
-}
-
-async function installBinary(name) {
-  const releaseTag = `v${packageJson.version}`
-  const url = `https://github.com/Skidy89/libsignal-plugins/releases/download/${releaseTag}/${name}`
-  const temporaryPath = join(__dirname, `.download-${process.pid}-${name}`)
-  const response = await fetch(url)
-
-  if (!response.ok || !response.body) {
-    throw new Error(`GitHub Release ${releaseTag} does not contain ${name} (HTTP ${response.status}).`)
-  }
-
-  try {
-    await pipeline(response.body, createWriteStream(temporaryPath))
-    renameSync(temporaryPath, join(__dirname, name))
-  } finally {
-    if (existsSync(temporaryPath)) {
-      unlinkSync(temporaryPath)
-    }
   }
 }

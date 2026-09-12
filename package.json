@@ -22,10 +22,15 @@
     "browser.js",
     "install.js",
     "*.node",
-    "cargo.toml",
+    "Cargo.toml",
+    "Cargo.lock",
     "native",
     "build.rs",
-    "src"
+    "src",
+    "proto-gen/Cargo.toml",
+    "proto-gen/Cargo.lock",
+    "proto-gen/build.rs",
+    "proto-gen/src"
   ],
   "napi": {
     "binaryName": "libsignal-plugins",
@@ -55,16 +60,14 @@
     "format:rs": "cargo fmt",
     "lint": "oxlint .",
     "prepublishOnly": "napi prepublish -t npm",
-    "postinstall": "node install.js",
+    "install": "node install.js",
     "test": "ava",
     "version": "napi version",
-    "prepare": "husky",
     "napi": "napi"
   },
   "devDependencies": {
     "@emnapi/core": "^1.5.0",
     "@emnapi/runtime": "^1.5.0",
-    "@napi-rs/cli": "^3.2.0",
     "@oxc-node/core": "^0.0.35",
     "@taplo/cli": "^0.7.0",
     "@tybys/wasm-util": "^0.10.0",
@@ -113,5 +116,8 @@
     "singleQuote": true,
     "arrowParens": "always"
   },
-  "packageManager": "yarn@4.12.0"
+  "packageManager": "yarn@4.12.0",
+  "dependencies": {
+    "@napi-rs/cli": "^3.2.0"
+  }
 }
