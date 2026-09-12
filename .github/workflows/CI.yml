@@ -97,6 +97,13 @@ jobs:
 
       - name: Enable Corepack
         run: corepack enable
+      - name: Install dependencies
+        run: yarn install
+      - name: Debug NAPI
+        run: |
+          yarn --version
+          yarn why @napi-rs/cli
+          yarn exec napi --version
 
       - name: Install protoc (Linux)
         if: runner.os == 'Linux'
